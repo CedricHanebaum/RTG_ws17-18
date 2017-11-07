@@ -33,7 +33,8 @@ std::vector<Assignment01::Student> Assignment01::getGroup() const
     /// e.g. group.push_back({"John Doe", 333333});
     /// ============= STUDENT CODE BEGIN =============
 
-    group.push_back({"John Doe", 333333});
+    group.push_back({"Cedric Hanebaum", 369995});
+    group.push_back({"Philip Weyer", 344416});
 
     /// ============= STUDENT CODE END =============
     return group;
@@ -52,27 +53,36 @@ void Assignment01::mainLoop()
     ///     double secs = timeInSeconds();
     /// ============ STUDENT CODE BEGIN =============
 
+    auto startTime = timeInSeconds();
+    auto deltaTime = 0.0;
+
     // this is an example of the simplest main loop:
     // variable timestep with no time measuring
     while (!shouldClose())
     {
-        // update the simulation
-        // (parameter is timestep in seconds)
-        update(0.0 /* TODO */);
+      startTime = timeInSeconds();
+      // update the simulation
+      // (parameter is timestep in seconds)
+      update(1.0 / 60.0);
 
-        // render the simulation
-        render();
+      if(totalFrames % 5 == 0) {
+	// std::cout << "Skip!" << std::endl;
+      } else {
+	// render the simulation
+	render();
+      }
 
-        // count the number of frames so you can verify your FPS
-        totalFrames += 1;
+      // count the number of frames so you can verify your FPS
+      totalFrames += 1;
 
-        // give the CPU time to breathe
-        // (negative arguments are ignored)
-        sleepSeconds(16 / 1000.0);
+      deltaTime = timeInSeconds() - startTime;
+
+      // give the CPU time to breathe
+      // (negative arguments are ignored)
+      sleepSeconds(1.0 / 60.0 - deltaTime);
     }
 
     /// ============= STUDENT CODE END =============
-
     // output FPS
     // only valid if totalFrames is properly incremented
     auto totalTime = timeInSeconds() - totalStartTime;
