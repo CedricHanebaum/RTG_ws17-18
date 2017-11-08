@@ -388,6 +388,31 @@ void Assignment02::updatePaddleSystem(float elapsedSeconds)
         ///
         /// ============= STUDENT CODE BEGIN =============
 
+	// Reset velocity
+	transform->velocity.y = 0;
+
+	// Modifiy velocity, depending on pressed keys
+	if(isKeyPressed(GLFW_KEY_W) && paddle->owner == Player::Left) {
+	  transform->velocity.y = speed;
+	}
+	if(isKeyPressed(GLFW_KEY_S) && paddle->owner == Player::Left) {
+	  transform->velocity.y = -speed;
+	}
+	if(isKeyPressed(GLFW_KEY_UP) && paddle->owner == Player::Right) {
+	  transform->velocity.y = speed;
+	}
+	if(isKeyPressed(GLFW_KEY_DOWN) && paddle->owner == Player::Right) {
+	  transform->velocity.y = -speed;
+	}
+
+	// check bounds
+	if(transform->position.y < 0 + shape->halfExtent.y) {
+	  transform->position.y = 0 + shape->halfExtent.y;
+	}
+	if(transform->position.y > mFieldHeight - shape->halfExtent.y) {
+	  transform->position.y = mFieldHeight - shape->halfExtent.y;
+	}
+
         /// ============= STUDENT CODE END =============
     }
 }
