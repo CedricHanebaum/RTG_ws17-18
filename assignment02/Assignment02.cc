@@ -167,6 +167,14 @@ void Assignment02::spawnBall()
         ///
         /// ============= STUDENT CODE BEGIN =============
 
+      spawnVelocity = glm::vec2(1, 0);
+      spawnVelocity = glm::rotate(spawnVelocity, glm::radians(random(-20, 20)));
+
+      spawnVelocity = spawnVelocity * random(300, 400);
+      if(random(-1, 1) < 0) {
+	spawnVelocity *= -1;
+      }
+
         /// ============= STUDENT CODE END =============
     }
 
