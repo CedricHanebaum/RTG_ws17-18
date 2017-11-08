@@ -504,6 +504,18 @@ void Assignment02::processMessages()
             ///
             /// ============= STUDENT CODE BEGIN =============
 
+	  if(msg.subject->entity->hasComponent<BallComponent>()) {
+	    auto rdc = msg.sender->entity->getComponent<RegionDetectorComponent>();
+	    if(rdc->owner == Player::Left) mScoreLeft++;
+	    if(rdc->owner == Player::Right) mScoreRight++;
+
+	    destroyEntity(msg.subject->entity);
+
+	    if(mBallComps.empty()) {
+	      spawnBall();
+	    }
+	  }
+
             /// ============= STUDENT CODE END =============
 
             // Update display of score in the AntTweakBar
