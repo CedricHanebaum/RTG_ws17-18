@@ -359,6 +359,15 @@ void Assignment02::updateRegionDetectorSystem(float elapsedSeconds)
                 ///
                 /// ============= STUDENT CODE BEGIN =============
 
+		if(glm::dot(dynamicTransform->position - detectorPos, halfPlaneShape->normal) <= 0) {
+		  Message msg;
+		  msg.type = MessageType::RegionDetection;
+		  msg.sender = detectorComp;
+		  msg.subject = dynamicComp;
+
+		  sendMessage(msg);
+		}
+
                 /// ============= STUDENT CODE END =============
             }
 }
