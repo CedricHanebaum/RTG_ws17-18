@@ -469,6 +469,18 @@ void Assignment02::processMessages()
             ///
             /// ============= STUDENT CODE BEGIN =============
 
+	    if(msg.sender->entity->hasComponent<PaddleComponent>() && msg.subject->entity->hasComponent<BallComponent>()) {
+	      auto tc = msg.subject->entity->getComponent<TransformComponent>();
+	      tc->velocity *= 1.2;
+
+	      if(glm::length(tc->velocity) > speedLimit) {
+		isAtSpeedLimit = true;
+
+		tc->velocity = glm::normalize(tc->velocity);
+		tc->velocity *= speedLimit;
+	      }
+	    }
+
             /// ============= STUDENT CODE END =============
 
             if (isAtSpeedLimit)
