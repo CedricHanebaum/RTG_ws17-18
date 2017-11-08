@@ -200,6 +200,8 @@ void Assignment02::spawnBall()
     /// ============= STUDENT CODE BEGIN =============
 
     auto cc = ball->addComponent<CollisionComponent>();
+    cc->dynamic = true;
+    mCollisionComps.push_back(cc);
 
     /// ============= STUDENT CODE END =============
 
