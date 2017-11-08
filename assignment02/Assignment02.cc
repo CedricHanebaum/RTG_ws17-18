@@ -227,6 +227,11 @@ void Assignment02::updateMotionSystem(float elapsedSeconds)
     ///
     /// ============= STUDENT CODE BEGIN =============
 
+  for(auto const &comp: mTransformComps) {
+    comp->position.x += comp->velocity.x * elapsedSeconds;
+    comp->position.y += comp->velocity.y * elapsedSeconds;
+  }
+
     /// ============= STUDENT CODE END =============
 }
 
