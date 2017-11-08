@@ -150,6 +150,7 @@ void Texture2DMultisample::BoundTexture2DMultisample::resize(size_t width, size_
     auto const samples = 4; // TODO: configurable
     auto const fixedSampleLocs = GL_FALSE; // TODO: configurable
     glTexImage2DMultisample(texture->mTarget, samples, texture->mInternalFormat, width, height, fixedSampleLocs);
+
 }
 
 

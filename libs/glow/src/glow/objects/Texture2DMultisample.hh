@@ -130,5 +130,7 @@ public: // static construction
     /// Creates a 2D multisampled texture with given width and height
     static SharedTexture2DMultisample create(size_t width = 1, size_t height = 1, GLenum internalFormat = GL_RGBA);
 
+
+    friend class Framebuffer;
 };
 }

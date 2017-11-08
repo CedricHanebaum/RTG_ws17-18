@@ -103,6 +103,9 @@ void VertexArray::BoundVertexArray::draw(GLsizei instanceCount)
         // draw unindexed
         glDrawArraysInstanced(vao->mPrimitiveMode, 0, vCount, instanceCount);
     }
+
+    // notify FBOs
+    notifyShaderExecuted();
 }
 
 void VertexArray::BoundVertexArray::drawRange(GLsizei start, GLsizei end, GLsizei instanceCount)
@@ -143,6 +146,9 @@ void VertexArray::BoundVertexArray::drawRange(GLsizei start, GLsizei end, GLsize
         // draw unindexed
         glDrawArraysInstanced(vao->mPrimitiveMode, start, end - start, instanceCount);
     }
+
+    // notify FBOs
+    notifyShaderExecuted();
 }
 
 void VertexArray::BoundVertexArray::drawTransformFeedback(const SharedTransformFeedback &feedback)
@@ -157,6 +163,9 @@ void VertexArray::BoundVertexArray::drawTransformFeedback(const SharedTransformF
     GLOW_RUNTIME_ASSERT(!feedback->isBound(), "Cannot use drawFeedback when feedback is still bound", return );
 
     glDrawTransformFeedback(vao->mPrimitiveMode, feedback->getObjectName());
+
+    // notify FBOs
+    notifyShaderExecuted();
 }
 
 void VertexArray::BoundVertexArray::attach(const SharedElementArrayBuffer &eab)
@@ -206,6 +215,13 @@ void VertexArray::attachAttribute(const VertexArrayAttribute &va)
 
     // last step: enable the attribute
     glEnableVertexAttribArray(va.locationInVAO);
+}
+
+void VertexArray::notifyShaderExecuted()
+{
+    auto fbo = Framebuffer::getCurrentBuffer();
+    if (fbo != nullptr)
+        fbo->buffer->notifyShaderExecuted();
 }
 
 SharedArrayBuffer VertexArray::getAttributeBuffer(const std::string &name) const

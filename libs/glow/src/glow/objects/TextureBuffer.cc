@@ -99,6 +99,7 @@ void TextureBuffer::BoundTextureBuffer::resize(size_t size)
 
 
     warning() << "not implemented.";
+
 }
 
 void TextureBuffer::BoundTextureBuffer::setData(GLenum internalFormat, size_t size, GLenum format, GLenum type, const GLvoid *data)

@@ -62,6 +62,11 @@ public: // getter
 
     /// returns true iff mipmaps are used (based on min filter)
     bool hasMipmapsEnabled() const;
+    /// returns true iff mipmaps were generated via bind().generateMipmaps() (and are still valid)
+    bool areMipmapsGenerated() const override { return mMipmapsGenerated; }
+    /// Manually sets the internal flag if mipmaps were generated
+    /// CAUTION: this should only be used if you modified the mipmap status manually (e.g. via glGenerateMipmaps)
+    void setMipmapsGenerated(bool areGenerated) override { mMipmapsGenerated = areGenerated; }
 
 public:
     /// RAII-object that defines a "bind"-scope for an array of 1D textures
@@ -278,5 +283,7 @@ public: // static construction
     static SharedTexture1DArray createFromData(SharedTextureData const& data);
     /// same as createFromData but with custom internal format
     static SharedTexture1DArray createFromData(SharedTextureData const& data, GLenum internalFormat);
+
+    friend class Framebuffer;
 };
 }

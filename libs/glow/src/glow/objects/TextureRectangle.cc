@@ -237,6 +237,7 @@ void TextureRectangle::BoundTextureRectangle::resize(size_t width, size_t height
     }
 
     glTexImage2D(texture->mTarget, 0, texture->mInternalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
+
 }
 
 void TextureRectangle::BoundTextureRectangle::setData(GLenum internalFormat, size_t width, size_t height, GLenum format, GLenum type, const GLvoid *data)

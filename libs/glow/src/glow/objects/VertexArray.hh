@@ -46,6 +46,9 @@ private:
     /// Attaches the given attribute to the current VAO
     static void attachAttribute(VertexArrayAttribute const& a);
 
+    /// Is called internally to notify the currently bound FBO that textures might have invalid mipmaps
+    static void notifyShaderExecuted();
+
 public: // getter
     GLuint getObjectName() const { return mObjectName; }
     GLenum getPrimitiveMode() const { return mPrimitiveMode; }
