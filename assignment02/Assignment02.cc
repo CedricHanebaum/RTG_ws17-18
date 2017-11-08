@@ -497,6 +497,11 @@ void Assignment02::processMessages()
                 ///
                 /// ============= STUDENT CODE BEGIN =============
 
+	      if(mMultiBallCooldown < -5) {
+		spawnBall();
+		mMultiBallCooldown = 0;
+	      }
+
                 /// ============= STUDENT CODE END =============
             }
         }
