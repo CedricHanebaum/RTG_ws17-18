@@ -199,6 +199,8 @@ void Assignment02::spawnBall()
     ///
     /// ============= STUDENT CODE BEGIN =============
 
+    auto cc = ball->addComponent<CollisionComponent>();
+
     /// ============= STUDENT CODE END =============
 
     mEntities.push_back(ball);
