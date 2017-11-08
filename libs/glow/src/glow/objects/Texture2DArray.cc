@@ -250,6 +250,8 @@ void Texture2DArray::BoundTexture2DArray::resize(size_t width, size_t height, si
     }
 
     glTexImage3D(texture->mTarget, 0, texture->mInternalFormat, width, height, layers, 0, format, GL_UNSIGNED_BYTE, nullptr);
+
+    texture->mMipmapsGenerated = false;
 }
 
 void Texture2DArray::BoundTexture2DArray::setData(GLenum internalFormat, size_t width, size_t height, size_t layers, GLenum format, GLenum type, const GLvoid *data, int mipmapLevel)
@@ -361,6 +363,7 @@ void Texture2DArray::clear(GLenum format, GLenum type, const GLvoid* data, int m
 #else
     error() << "Texture2DArray::clear is only supported for OpenGL 4.4+";9
 #endif
+    mMipmapsGenerated = false;
 }
 
 std::vector<char> Texture2DArray::BoundTexture2DArray::getData(GLenum format, GLenum type, int mipmapLevel)

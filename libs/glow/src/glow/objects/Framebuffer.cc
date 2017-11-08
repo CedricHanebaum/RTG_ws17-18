@@ -1,10 +1,11 @@
 #include "Framebuffer.hh"
 
-#include <limits>
 #include <cassert>
+#include <limits>
 
 #include <glm/glm.hpp>
 
+#include "Program.hh"
 #include "Texture.hh"
 #include "TextureRectangle.hh"
 
@@ -78,7 +79,8 @@ void Framebuffer::internalReattach()
         attachToFramebuffer(a.texture, GL_COLOR_ATTACHMENT0 + loc, a.mipmapLevel, a.layer);
     }
     if (mDepthAttachment.texture)
-        attachToFramebuffer(mDepthAttachment.texture, GL_DEPTH_ATTACHMENT, mDepthAttachment.mipmapLevel, mDepthAttachment.layer);
+        attachToFramebuffer(mDepthAttachment.texture, GL_DEPTH_ATTACHMENT, mDepthAttachment.mipmapLevel,
+                            mDepthAttachment.layer);
     if (mStencilAttachment.texture)
         attachToFramebuffer(mStencilAttachment.texture, GL_STENCIL_ATTACHMENT, mStencilAttachment.mipmapLevel,
                             mStencilAttachment.layer);
@@ -157,6 +159,25 @@ bool Framebuffer::internalCheckComplete()
 Framebuffer::BoundFramebuffer *Framebuffer::getCurrentBuffer()
 {
     return sCurrentBuffer;
+}
+
+void Framebuffer::notifyShaderExecuted()
+{
+    // check shader if they use invalid mipmaps
+    auto shader = Program::getCurrentProgram();
+    if (shader)
+        shader->program->validateTextureMipmaps();
+
+    // invalidate texture mipmaps
+    for (auto const &a : mColorAttachments)
+        if (a.texture != nullptr)
+            a.texture->setMipmapsGenerated(false);
+
+    if (mDepthAttachment.texture != nullptr)
+        mDepthAttachment.texture->setMipmapsGenerated(false);
+
+    if (mStencilAttachment.texture != nullptr)
+        mStencilAttachment.texture->setMipmapsGenerated(false);
 }
 
 Framebuffer::Framebuffer()

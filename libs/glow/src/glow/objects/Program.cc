@@ -1,22 +1,23 @@
 #include "Program.hh"
 
 #include <cassert>
-#include <fstream>
 #include <chrono>
+#include <fstream>
 
-#include "Shader.hh"
-#include "UniformBuffer.hh"
-#include "ShaderStorageBuffer.hh"
 #include "AtomicCounterBuffer.hh"
+#include "Framebuffer.hh"
+#include "Shader.hh"
+#include "ShaderStorageBuffer.hh"
 #include "Texture.hh"
+#include "UniformBuffer.hh"
 
-#include "glow/limits.hh"
-#include "glow/glow.hh"
+#include "glow/common/gl_to_string.hh"
 #include "glow/common/runtime_assert.hh"
 #include "glow/common/shader_endings.hh"
 #include "glow/common/str_utils.hh"
-#include "glow/common/gl_to_string.hh"
 #include "glow/common/thread_local.hh"
+#include "glow/glow.hh"
+#include "glow/limits.hh"
 #include "glow/util/LocationMapping.hh"
 #include "glow/util/UniformState.hh"
 
@@ -110,6 +111,13 @@ void Program::setShaderReloading(bool enabled)
     sCheckShaderReloading = enabled;
 }
 
+void Program::validateTextureMipmaps() const
+{
+    for (auto const &t : mTextures)
+        if (t != nullptr && !t->areMipmapsGenerated())
+            glow::error() << "Texture is bound to shader but does not have mipmaps generated.";
+}
+
 GLint Program::getUniformLocation(const std::string &name) const
 {
     for (auto const &kvp : mUniformCache)
@@ -198,8 +206,8 @@ void Program::link(bool saveUniformState)
     checkValidGLOW();
     GLOW_ACTION();
 
-	// save uniforms
-	auto uniforms = saveUniformState ? getUniforms() : nullptr;
+    // save uniforms
+    auto uniforms = saveUniformState ? getUniforms() : nullptr;
 
     auto requiresRelink = true;
     auto linkCnt = 0;
@@ -375,9 +383,9 @@ void Program::link(bool saveUniformState)
     // clear cache
     mUniformCache.clear();
 
-	// restore uniforms
-	if (uniforms)
-		uniforms->restore();
+    // restore uniforms
+    if (uniforms)
+        uniforms->restore();
 }
 
 void Program::configureTransformFeedback(const std::vector<std::string> &varyings, GLenum bufferMode)
@@ -406,6 +414,11 @@ void Program::UsedProgram::compute(GLuint groupsX, GLuint groupsY, GLuint groups
 
     checkValidGLOW();
     glDispatchCompute(groupsX, groupsY, groupsZ);
+
+    // notify FBO
+    auto fbo = Framebuffer::getCurrentBuffer();
+    if (fbo != nullptr)
+        fbo->buffer->notifyShaderExecuted();
 }
 
 void Program::UsedProgram::beginTransformFeedback(GLenum primitiveMode, const SharedBuffer &feedbackBuffer)

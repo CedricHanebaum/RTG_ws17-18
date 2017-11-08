@@ -118,6 +118,10 @@ public: // getter
     static void setShaderReloading(bool enabled);
 
 public:
+    /// Checks if all bound textures have valid mipmaps
+    void validateTextureMipmaps() const;
+
+public:
     /// RAII-object that defines a "use"-scope for a Program
     /// All functions that operate on the currently bound program are accessed here
     struct UsedProgram

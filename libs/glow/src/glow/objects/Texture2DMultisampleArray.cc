@@ -151,6 +151,7 @@ void Texture2DMultisampleArray::BoundTexture2DMultisampleArray::resize(size_t wi
     auto const samples = 4; // TODO: configurable
     auto const fixedSampleLocs = GL_FALSE; // TODO: configurable
     glTexImage3DMultisample(texture->mTarget, samples, texture->mInternalFormat, width, height, layers, fixedSampleLocs);
+
 }
 
 

@@ -275,5 +275,7 @@ public: // static construction
     static SharedTextureRectangle createFromData(SharedTextureData const& data);
     /// same as createFromData but with custom internal format
     static SharedTextureRectangle createFromData(SharedTextureData const& data, GLenum internalFormat);
+
+    friend class Framebuffer;
 };
 }

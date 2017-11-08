@@ -50,6 +50,13 @@ public: // getter
     GLenum getInternalFormat() const { return mInternalFormat; }
     virtual bool isStorageImmutable() const { return false; }
 
+    /// returns true iff mipmaps were generated via bind().generateMipmaps() (and are still valid)
+    /// default is true for all textures
+    virtual bool areMipmapsGenerated() const { return true; }
+    /// Manually sets the internal flag if mipmaps were generated
+    /// CAUTION: this should only be used if you modified the mipmap status manually (e.g. via glGenerateMipmaps)
+    virtual void setMipmapsGenerated(bool areGenerated) { /* nope */ }
+
     /// returns the size of this texture. Contains 1 for non-used dimensions.
     virtual glm::uvec3 getDimensions() const = 0;
 protected:

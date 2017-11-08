@@ -261,6 +261,8 @@ void Texture3D::BoundTexture3D::resize(size_t width, size_t height, size_t depth
     }
 
     glTexImage3D(texture->mTarget, 0, texture->mInternalFormat, width, height, depth, 0, format, GL_UNSIGNED_BYTE, nullptr);
+
+    texture->mMipmapsGenerated = false;
 }
 
 void Texture3D::BoundTexture3D::setData(GLenum internalFormat, size_t width, size_t height, size_t depth, GLenum format, GLenum type, const GLvoid *data, int mipmapLevel)
@@ -374,6 +376,7 @@ void Texture3D::clear(GLenum format, GLenum type, const GLvoid* data, int mipmap
 #else
     error() << "Texture3D::clear is only supported for OpenGL 4.4+";9
 #endif
+    mMipmapsGenerated = false;
 }
 
 std::vector<char> Texture3D::BoundTexture3D::getData(GLenum format, GLenum type, int mipmapLevel)

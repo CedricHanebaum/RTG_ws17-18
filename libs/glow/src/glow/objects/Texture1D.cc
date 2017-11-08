@@ -235,6 +235,8 @@ void Texture1D::BoundTexture1D::resize(size_t width)
     }
 
     glTexImage1D(texture->mTarget, 0, texture->mInternalFormat, width, 0, format, GL_UNSIGNED_BYTE, nullptr);
+
+    texture->mMipmapsGenerated = false;
 }
 
 void Texture1D::BoundTexture1D::setData(GLenum internalFormat, size_t width, GLenum format, GLenum type, const GLvoid *data, int mipmapLevel)
@@ -340,6 +342,7 @@ void Texture1D::clear(GLenum format, GLenum type, const GLvoid* data, int mipmap
 #else
     error() << "Texture1D::clear is only supported for OpenGL 4.4+";9
 #endif
+    mMipmapsGenerated = false;
 }
 
 std::vector<char> Texture1D::BoundTexture1D::getData(GLenum format, GLenum type, int mipmapLevel)

@@ -250,6 +250,8 @@ void TextureCubeMapArray::BoundTextureCubeMapArray::resize(size_t width, size_t 
     }
 
     glTexImage3D(texture->mTarget, 0, texture->mInternalFormat, width, height, layers * 6u, 0, format, GL_UNSIGNED_BYTE, nullptr);
+
+    texture->mMipmapsGenerated = false;
 }
 
 void TextureCubeMapArray::BoundTextureCubeMapArray::setData(GLenum internalFormat, GLenum target, size_t width, size_t height, size_t layers, GLenum format, GLenum type, const GLvoid *data, int mipmapLevel)
@@ -357,6 +359,7 @@ void TextureCubeMapArray::clear(GLenum format, GLenum type, const GLvoid* data, 
 #else
     error() << "TextureCubeMapArray::clear is only supported for OpenGL 4.4+";9
 #endif
+    mMipmapsGenerated = false;
 }
 
 std::vector<char> TextureCubeMapArray::BoundTextureCubeMapArray::getData(GLenum format, GLenum type, int mipmapLevel)

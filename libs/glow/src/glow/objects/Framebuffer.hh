@@ -82,6 +82,11 @@ public: // getter
     static BoundFramebuffer* getCurrentBuffer();
 
 public:
+    /// Notifies this FBO that some shader wrote to it
+    /// E.g. used to tell textures that their mipmaps are invalid
+    void notifyShaderExecuted();
+
+public:
     /// RAII-object that defines a "bind"-scope for a Framebuffer
     /// All functions that operate on the currently bound buffer are accessed here
     struct BoundFramebuffer
