@@ -47,7 +47,7 @@ private:
 
     // Destroys an entity and all attached components
     // Removes the entity (and its components) from all lists in this class
-    void destroyEntity(Entity *entity);
+    void destroyEntity(Entity* entity);
 
 private: // ECS
     // list of entities
