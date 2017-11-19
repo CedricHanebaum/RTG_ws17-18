@@ -363,6 +363,11 @@ bool Assignment03::checkSphereSegmentCollision(glm::vec2 p0, glm::vec2 p1, glm::
             ///
             /// ============= STUDENT CODE BEGIN =============
 
+            glm::vec2 g = glm::vec2(n.x, 2 * t - 1);
+            float v = glm::length(tc->velocity);
+            glm::vec2 h = glm::normalize(glm::normalize(g) + glm::normalize(tc->velocity));
+            tc->velocity = h * v;
+
             /// ============= STUDENT CODE END =============
 
             if (mParams.scenario != Scenario::Task3)
