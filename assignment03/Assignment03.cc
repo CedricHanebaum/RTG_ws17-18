@@ -289,6 +289,9 @@ void Assignment03::updateMotionSystem(float elapsedSeconds)
         ///
         /// ============= STUDENT CODE BEGIN =============
 
+        glm::vec2 acceleration = transformComp->acceleration - transformComp->velocity * transformComp->linearDrag;
+        transformComp->velocity += acceleration * elapsedSeconds;
+
         /// ============= STUDENT CODE END =============
 
         transformComp->position += transformComp->velocity * elapsedSeconds;
