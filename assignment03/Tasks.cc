@@ -90,7 +90,29 @@ float ai::task2a(size_t paddleIdx,
     /// ============= STUDENT CODE BEGIN =============
 
     auto maxAccel = params.paddleMaxAcceleration;
-    return maxAccel;
+    float ret = 0;
+
+    float targetPos = params.fieldHeight / 2;
+
+    if(balls[0].transform->velocity.x < 0) {
+        targetPos = balls[0].transform->position.y;
+    }
+
+    float timeToStop = abs(paddle.transform->velocity.y) / maxAccel;
+    float distance = targetPos - paddle.transform->position.y;
+    float timeToTarget = abs(distance) / abs(paddle.transform->velocity.y);
+
+    if(distance > 0) {
+        ret = maxAccel;
+    } else {
+        ret = -maxAccel;
+    }
+
+    if(timeToStop > timeToTarget) {
+        ret = paddle.transform->velocity.y < 0 ? maxAccel : -maxAccel;
+    }
+
+    return ret;
 
     /// ============= STUDENT CODE END =============
 }
