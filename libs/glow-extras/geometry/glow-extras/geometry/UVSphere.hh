@@ -4,6 +4,7 @@
 #include <glm/vec3.hpp>
 #include <glm/geometric.hpp>
 #include <glm/common.hpp>
+#include <glm/gtc/constants.hpp>
 
 #include <glow/common/shared.hh>
 
@@ -109,8 +110,8 @@ public:
         for (int r = 0; r < rings + 1; ++r)
             for (int s = 0; s < segments + 1; ++s)
             {
-                float theta = M_PI / rings * r;
-                float phi = 2 * M_PI / segments * s;
+                float theta = glm::pi<float>() / rings * r;
+                float phi = 2 * glm::pi<float>() / segments * s;
 
                 glm::vec3 position = {std::cos(phi) * std::sin(theta) * radius, std::cos(theta) * radius, std::sin(phi) * std::sin(theta) * radius};
                 glm::vec3 normal = glm::normalize(position);
