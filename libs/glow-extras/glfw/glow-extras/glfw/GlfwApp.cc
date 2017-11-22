@@ -90,7 +90,12 @@ void GlfwApp::init()
         DefaultShaderParser::addIncludePath(util::pathOf(__FILE__) + "/../../../material/shader");
         DefaultShaderParser::addIncludePath(util::pathOf(__FILE__) + "/../../../debugging/shader");
 
+        // create camera with some sensible defaults
         mCamera = std::make_shared<camera::GenericCamera>();
+        mCamera->setPosition({2, 2, 2});
+        mCamera->setTarget({0, 0, 0});
+
+        // set up rendering pipeline
         mPipeline = pipeline::RenderingPipeline::create(mCamera);
 
         mDebugRenderer = std::make_shared<debugging::DebugRenderer>();
@@ -140,10 +145,12 @@ void GlfwApp::renderPass(const pipeline::RenderPass &pass, float elapsedSeconds)
 
 void GlfwApp::onResize(int w, int h)
 {
-    if (mUseDefaultRendering && mCamera && mPipeline)
+    if (mUseDefaultRendering)
     {
-        mCamera->resize(w, h);
-        mPipeline->resize(w, h);
+        if (mCamera)
+            mCamera->resize(w, h);
+        if (mPipeline)
+            mPipeline->resize(w, h);
     }
 }
 
@@ -508,7 +515,14 @@ int GlfwApp::run(int argc, char *argv[])
     glfwMakeContextCurrent(mWindow);
 
     // WORKAROUND for Intel bug (3.3 available but 3.0 returned UNLESS explicitly requested)
-    using glGetIntegerFunc = void(GLenum, GLint *);
+#define GL_CALL
+#ifdef GLOW_COMPILER_MSVC
+#if _WIN32
+#undef GL_CALL
+#define GL_CALL __stdcall // 32bit windows needs a special calling convention
+#endif
+#endif
+    using glGetIntegerFunc = void GL_CALL(GLenum, GLint *);
     auto getGlInt = (glGetIntegerFunc *)glfwGetProcAddress("glGetIntegerv");
     GLint gmajor, gminor;
     getGlInt(GL_MAJOR_VERSION, &gmajor);
