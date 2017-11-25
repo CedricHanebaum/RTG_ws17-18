@@ -307,7 +307,23 @@ SharedVertexArray Cloth::createVAO()
     for (int y = 0; y < res; ++y)
         for (int x = 0; x < res; ++x)
         {
-            glm::vec3 n = {0, 1, 0}; // FIXME
+            glm::vec3 n1 = {0, 0, 0};
+            glm::vec3 n2 = {0, 0, 0};
+            glm::vec3 n3 = {0, 0, 0};
+            glm::vec3 n4 = {0, 0, 0};
+
+            if(y > 0 && x > 0)
+                n1 = glm::cross(pos(x, y - 1) - pos(x, y), pos(x - 1, y) - pos(x, y));
+            if(y < res - 2 && x > 0)
+                n2 = glm::cross(pos(x - 1, y) - pos(x, y), pos(x, y + 1) - pos(x, y));
+            if(y < res - 2 && x < res - 2)
+                n3 = glm::cross(pos(x, y + 1) - pos(x, y), pos(x + 1, y) - pos(x, y));
+            if(y > 0 && x < res - 2)
+                n4 = glm::cross(pos(x + 1, y) - pos(x, y), pos(x, y - 1) - pos(x, y));
+
+            glm::vec3 n = glm::normalize(glm::vec3((n1.x + n2.x + n3.x + n4.x) / 4,
+                                                   (n1.y + n2.y + n3.y + n4.y) / 4,
+                                                   (n1.z + n2.z + n3.z + n4.z) / 4));
 
             normals[y * res + x] = n;
         }
