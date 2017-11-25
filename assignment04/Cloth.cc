@@ -367,6 +367,47 @@ SharedVertexArray Cloth::createVAO()
                 ///
                 /// ============= STUDENT CODE BEGIN =============
 
+                auto n00 = glm::vec3(0, 0, 0);
+                auto n01 = glm::vec3(0, 0, 0);
+                auto n10 = glm::vec3(0, 0, 0);
+                auto n11 = glm::vec3(0, 0, 0);
+
+                n00 = normals[y * res + x];
+                if(y < res - 2)
+                    n01 = normals[(y + 1) * res + x];
+                if(x < res - 2)
+                    n10 = normals[y * res + (x + 1)];
+                if(x < res - 2 && y < res - 2)
+                    n11 = normals[(y + 1) * res + (x + 1)];
+
+                glm::vec3 pcp = glm::vec3((p00.x + p01.x + p10.x + p11.x) / 4,
+                                          (p00.y + p01.y + p10.y + p11.y) / 4,
+                                          (p00.z + p01.z + p10.z + p11.z) / 4);
+
+                glm::vec3 pcc = glm::vec3((c00.x + c01.x + c10.x + c11.x) / 4,
+                                          (c00.y + c01.y + c10.y + c11.y) / 4,
+                                          (c00.z + c01.z + c10.z + c11.z) / 4);
+
+                glm::vec3 pcn = glm::vec3((n00.x + n01.x + n10.x + n11.x) / 4,
+                                          (n00.y + n01.y + n10.y + n11.y) / 4,
+                                          (n00.z + n01.z + n10.z + n11.z) / 4);
+
+                vertices.push_back({pcp, pcn, pcc});
+                vertices.push_back({p10, n10, c10});
+                vertices.push_back({p00, n00, c00});
+
+                vertices.push_back({pcp, pcn, pcc});
+                vertices.push_back({p00, n00, c00});
+                vertices.push_back({p01, n01, c01});
+
+                vertices.push_back({pcp, pcn, pcc});
+                vertices.push_back({p01, n01, c01});
+                vertices.push_back({p11, n11, c11});
+
+                vertices.push_back({pcp, pcn, pcc});
+                vertices.push_back({p11, n11, c11});
+                vertices.push_back({p10, n10, c10});
+
                 /// ============= STUDENT CODE END =============
             }
             else
