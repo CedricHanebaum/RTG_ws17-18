@@ -376,6 +376,16 @@ SharedVertexArray Cloth::createVAO()
                 ///
                 /// ============= STUDENT CODE BEGIN =============
 
+                glm::vec3 n1 = glm::normalize(glm::cross(p10 - p00, p01 - p00));
+                vertices.push_back({p00, n1, c00});
+                vertices.push_back({p01, n1, c01});
+                vertices.push_back({p10, n1, c10});
+
+                glm::vec3 n2 = glm::normalize(glm::cross(p10 - p11, p01 - p11));
+                vertices.push_back({p01, n2, c01});
+                vertices.push_back({p10, n2, c10});
+                vertices.push_back({p11, n2, c11});
+
                 /// ============= STUDENT CODE END =============
             }
         }
