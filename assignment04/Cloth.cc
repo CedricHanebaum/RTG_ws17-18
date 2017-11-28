@@ -158,6 +158,17 @@ void Cloth::updateForces()
         ///
         /// ============= STUDENT CODE BEGIN =============
 
+        auto x = glm::length(s.p0->position - s.p1->position) - s.restDistance;
+
+        auto f0 = -springK * x * glm::normalize(s.p0->position - s.p1->position);
+        auto f1 = -springK * x * glm::normalize(s.p1->position - s.p0->position);
+
+        s.p0->accumulatedForces += f0;
+        s.p1->accumulatedForces += f1;
+
+        s.p0->stress += x * 100;
+        s.p1->stress += x * 100;
+
         /// ============= STUDENT CODE END =============
     }
 
