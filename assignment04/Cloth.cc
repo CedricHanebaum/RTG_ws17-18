@@ -209,6 +209,10 @@ void Cloth::updateMotion(float elapsedSeconds)
         ///
         /// ============= STUDENT CODE BEGIN =============
 
+        glm::vec3 a = p.accumulatedForces / p.mass;
+        p.velocity += a * elapsedSeconds;
+        p.position += p.velocity * elapsedSeconds;
+
         /// ============= STUDENT CODE END =============
     }
 }
