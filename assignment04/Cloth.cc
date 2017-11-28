@@ -195,6 +195,8 @@ void Cloth::updateForces()
         ///
         /// ============= STUDENT CODE BEGIN =============
 
+        p.accumulatedForces -= dampingD * p.velocity;
+
         /// ============= STUDENT CODE END =============
     }
 }
