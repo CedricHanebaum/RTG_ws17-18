@@ -83,6 +83,9 @@ void VertexArray::BoundVertexArray::draw(GLsizei instanceCount)
     negotiateBindings();
     instanceCount = instanceCount >= 0 ? instanceCount : vao->getInstanceCount();
 
+    if (vao->isEmpty())
+        glow::warning() << "Drawing empty VertexArray";
+
     if (vao->mElementArrayBuffer)
     {
         // draw indexed
@@ -116,6 +119,9 @@ void VertexArray::BoundVertexArray::drawRange(GLsizei start, GLsizei end, GLsize
     checkValidGLOW();
     negotiateBindings();
     instanceCount = instanceCount >= 0 ? instanceCount : vao->getInstanceCount();
+
+    if (vao->isEmpty())
+        glow::warning() << "Drawing empty VertexArray";
 
     if (vao->mElementArrayBuffer)
     {
@@ -222,6 +228,21 @@ void VertexArray::notifyShaderExecuted()
     auto fbo = Framebuffer::getCurrentBuffer();
     if (fbo != nullptr)
         fbo->buffer->notifyShaderExecuted();
+}
+
+bool VertexArray::isEmpty() const
+{
+    // index Cnt > 0 ?
+    if (mElementArrayBuffer)
+        return mElementArrayBuffer->getIndexCount() == 0;
+
+    // vertex Cnt > 0 ?
+    for (auto const &a : mAttributes)
+        if (a.buffer->getAttributes()[a.locationInBuffer].divisor == 0)
+            return a.buffer->getElementCount() == 0;
+
+    // no divisor 0 attribute
+    return true;
 }
 
 SharedArrayBuffer VertexArray::getAttributeBuffer(const std::string &name) const

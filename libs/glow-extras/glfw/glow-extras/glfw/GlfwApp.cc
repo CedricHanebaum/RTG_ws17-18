@@ -83,17 +83,23 @@ bool GlfwApp::shouldClose() const
 
 void GlfwApp::init()
 {
+	if (!mUseDefaultCamera && mUseDefaultRendering)
+		glow::error() << "Cannot use default rendering without default camera in GlfwApp.";
+
+	if (mUseDefaultCamera || mUseDefaultRendering)
+	{
+		// create camera with some sensible defaults
+		mCamera = std::make_shared<camera::GenericCamera>();
+		mCamera->setPosition({ 2, 2, 2 });
+		mCamera->setTarget({ 0, 0, 0 });
+	}
+
     if (mUseDefaultRendering)
     {
         // include paths (BEFORE pipeline init)
         DefaultShaderParser::addIncludePath(util::pathOf(__FILE__) + "/../../../pipeline/shader");
         DefaultShaderParser::addIncludePath(util::pathOf(__FILE__) + "/../../../material/shader");
         DefaultShaderParser::addIncludePath(util::pathOf(__FILE__) + "/../../../debugging/shader");
-
-        // create camera with some sensible defaults
-        mCamera = std::make_shared<camera::GenericCamera>();
-        mCamera->setPosition({2, 2, 2});
-        mCamera->setTarget({0, 0, 0});
 
         // set up rendering pipeline
         mPipeline = pipeline::RenderingPipeline::create(mCamera);
@@ -137,21 +143,17 @@ void GlfwApp::render(float elapsedSeconds)
 
 void GlfwApp::renderPass(const pipeline::RenderPass &pass, float elapsedSeconds)
 {
-    if (mUseDefaultRendering)
-    {
-        debug()->renderPass(pass);
-    }
+	if (mUseDefaultRendering)
+		debug()->renderPass(pass);
 }
 
 void GlfwApp::onResize(int w, int h)
 {
-    if (mUseDefaultRendering)
-    {
-        if (mCamera)
-            mCamera->resize(w, h);
-        if (mPipeline)
-            mPipeline->resize(w, h);
-    }
+    if (mCamera)
+        mCamera->resize(w, h);
+
+    if (mPipeline)
+        mPipeline->resize(w, h);
 }
 
 void GlfwApp::onClose() {}
