@@ -102,7 +102,8 @@ private:
     double mOutputStatsInterval = 5.0; ///< number of seconds between stats output (0.0 for never)
     bool mQueryStats = true;           ///< if true, queries stats (vertices, fragments, ...)
 
-    bool mUseDefaultRendering = true;      ///< if true, uses default rendering pipeline setup
+	bool mUseDefaultCamera = true;         ///< if true, uses default camera
+	bool mUseDefaultRendering = true;      ///< if true, uses default rendering pipeline setup (requires default cam)
     bool mUseDefaultCameraHandling = true; ///< if true, implements default cam handling
 
     double mCurrentTime = 0.0; ///< current frame time (starts with 0)
@@ -157,7 +158,8 @@ public:
     GLOW_GETTER(Camera);
     GLOW_GETTER(Pipeline);
 
-    GLOW_PROPERTY(UseDefaultCameraHandling);
+	GLOW_PROPERTY(UseDefaultCamera);
+	GLOW_PROPERTY(UseDefaultCameraHandling);
     GLOW_PROPERTY(CameraMoveSpeed);
     GLOW_PROPERTY(CameraTurnSpeed);
     GLOW_PROPERTY(CameraScrollSpeed);

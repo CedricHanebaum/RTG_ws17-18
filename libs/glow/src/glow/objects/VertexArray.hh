@@ -57,6 +57,9 @@ public: // getter
     SharedElementArrayBuffer const& getElementArrayBuffer() const { return mElementArrayBuffer; }
     std::vector<VertexArrayAttribute> const& getAttributes() const { return mAttributes; }
 
+    /// returns true iff a draw call would draw zero primitives
+    bool isEmpty() const;
+
 public:
     /// returns the AB that contains the given attribute (or nullptr if not found)
     SharedArrayBuffer getAttributeBuffer(std::string const& name) const;
