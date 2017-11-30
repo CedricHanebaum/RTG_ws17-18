@@ -184,7 +184,7 @@ void RigidBody::computeCollision(glm::vec3 worldPos, glm::vec3 otherNormal)
     auto num = -(1 + restitution) * vrel;
     auto t1 = 1.0f / mass;
     auto t2 = 0.0f; // inf mass
-    auto t3 = dot(otherNormal, invInertiaWorld() * cross(cross(relPos, otherNormal), relPos));
+    auto t3 = dot(otherNormal, cross(invInertiaWorld() * cross(relPos, otherNormal), relPos));
     auto t4 = 0.0f; // inf inertia
 
     auto j = num / (t1 + t2 + t3 + t4);
