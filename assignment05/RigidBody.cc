@@ -121,7 +121,7 @@ void RigidBody::update(float elapsedSeconds)
 /// Notes:
 ///     - you can test your angular velocity code with the following settings for omega:
 ///       (be sure to remove test code before uploading)
-///         omega = glm::vec3(0, 1, 0) // slow clockwise rotation around Y
+///         omega = glm::vec3(0, 1, 0) // slow counter-clockwise rotation around Y
 ///         omega = glm::vec3(5, 0, 0) // faster rotation around X (the long side for the pendulum)
 ///
 ///
