@@ -162,16 +162,33 @@ void Assignment05::renderScene(camera::CameraBase* cam, bool shadowPass)
                 auto sphere = std::dynamic_pointer_cast<SphereShape>(s);
                 auto box = std::dynamic_pointer_cast<BoxShape>(s);
 
+                auto rbTransform = mRigidBody.getTransform();
+
                 // draw spheres
                 if (sphere)
                 {
-                    // TODO
+                    glm::mat4 modelMatrix = glm::mat4();
+                    auto r = sphere->radius;
+                    modelMatrix *= rbTransform;
+                    modelMatrix *= sphere->transform;
+                    modelMatrix = glm::scale(modelMatrix, glm::vec3(r, r, r));
+
+                    shader.setUniform("uModelMatrix", modelMatrix);
+
+                    mMeshSphere->bind().draw();
                 }
 
                 // draw boxes
                 if (box)
                 {
-                    // TODO
+                    glm::mat4 modelMatrix = glm::mat4();
+                    modelMatrix *= rbTransform;
+                    modelMatrix *= box->transform;
+                    modelMatrix = glm::scale(modelMatrix, box->halfExtent);
+
+                    shader.setUniform("uModelMatrix", modelMatrix);
+
+                    mMeshCube->bind().draw();
                 }
             }
 
