@@ -110,7 +110,7 @@ bool BoxShape::rayCast(glm::mat4 const &rbTransform, glm::vec3 rayPos, glm::vec3
             auto worldTangent1 = m3 * tangent1 * s;
             auto worldCenter = glm::vec3(m4 * glm::vec4(c, 1));
 
-            if (abs(dot(worldNormal, rayDir)) < 0.0001)
+            if (glm::abs(dot(worldNormal, rayDir)) < 0.0001)
                 continue; // near parallel
 
             // project to plane
@@ -119,7 +119,7 @@ bool BoxShape::rayCast(glm::mat4 const &rbTransform, glm::vec3 rayPos, glm::vec3
 
             // check if inside
             auto planeDir = planePos - worldCenter;
-            if (abs(dot(worldTangent0, planeDir)) < d0 && abs(dot(worldTangent1, planeDir)) < d1)
+            if (glm::abs(dot(worldTangent0, planeDir)) < d0 && glm::abs(dot(worldTangent1, planeDir)) < d1)
             {
                 // TODO: handle inside-box scenario
 
