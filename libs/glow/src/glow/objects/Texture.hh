@@ -50,6 +50,8 @@ public: // getter
     GLenum getInternalFormat() const { return mInternalFormat; }
     virtual bool isStorageImmutable() const { return false; }
 
+    /// returns true iff this texture is being drawn with mipmaps
+    virtual bool hasMipmapsEnabled() const { return false; }
     /// returns true iff mipmaps were generated via bind().generateMipmaps() (and are still valid)
     /// default is true for all textures
     virtual bool areMipmapsGenerated() const { return true; }

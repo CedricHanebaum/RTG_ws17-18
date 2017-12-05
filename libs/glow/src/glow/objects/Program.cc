@@ -114,7 +114,7 @@ void Program::setShaderReloading(bool enabled)
 void Program::validateTextureMipmaps() const
 {
     for (auto const &t : mTextures)
-        if (t != nullptr && !t->areMipmapsGenerated())
+        if (t != nullptr && !t->areMipmapsGenerated() && t->hasMipmapsEnabled())
             glow::error() << "Texture is bound to shader but does not have mipmaps generated.";
 }
 

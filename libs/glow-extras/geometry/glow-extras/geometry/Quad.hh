@@ -72,8 +72,8 @@ public:
         ab->defineAttributes(attributes);
         VertexT data[] = {
             gen(minCoord.x, minCoord.y), //
-            gen(maxCoord.x, minCoord.y), //
             gen(minCoord.x, maxCoord.y), //
+            gen(maxCoord.x, minCoord.y), //
             gen(maxCoord.x, maxCoord.y),
         };
         ab->bind().setData(data);

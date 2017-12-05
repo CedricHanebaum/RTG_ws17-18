@@ -223,7 +223,7 @@ void Cloth::updateMotion(float elapsedSeconds)
         ///     - update the particle position (p.position)
         ///
         /// Notes:
-        ///     - particle force is stored in p.accumulatedForce
+        ///     - particle force is stored in p.accumulatedForces
         ///     - particle mass is stored in p.mass
         ///
         /// ============= STUDENT CODE BEGIN =============
