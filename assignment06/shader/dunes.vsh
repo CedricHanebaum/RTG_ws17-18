@@ -37,9 +37,23 @@ float poolSize = 2 * max(rW, rH);
 ///     - the pool is centered at the origin
 ///
 /// ============= STUDENT CODE BEGIN =============
+float lnEps = -13.81551055796427410410794872810618524560660893177263;
+float e = 2.7182818284590452353602874713526624977572;
+
+float taper(float dist, float taperMin, float taperMax) {
+    float a = lnEps / (2 * (taperMin - taperMax));
+    float x = dist - taperMax;
+    return pow(e, a * (x - abs(x)));
+}
+
 float getTerrainHeight(vec2 pos)
 {
-    return 0;
+    float taperMax = 2.5 * poolSize;
+
+    float noiseL = 8 * cnoise(pos * 20);
+    float noiseS = 0.2 * cnoise(pos * 0.5); noiseS = 0;
+
+    return taper(length(pos), poolSize, taperMax) * ((noiseL + noiseS) / 2);
 }
 /// ============= STUDENT CODE END =============
 
