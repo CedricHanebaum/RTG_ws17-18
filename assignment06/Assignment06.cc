@@ -433,6 +433,7 @@ void Assignment06::init()
 ///     - you can do it!
 ///
 /// ============= STUDENT CODE BEGIN =============
+        mShaderPalms = Program::createFromFile(shaderPath + "palms");
 /// ============= STUDENT CODE END =============
         mShaderPool = Program::createFromFile(shaderPath + "pool");
         mShaderLadder = Program::createFromFile(shaderPath + "ladder");
