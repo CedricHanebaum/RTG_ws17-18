@@ -512,6 +512,9 @@ void Assignment06::init()
 ///     - pay attention to the color space parameter for the normal texture
 ///
 /// ============= STUDENT CODE BEGIN =============
+            mTexPalmColor = Texture2D::createFromFile(texPath + "palm.color.png");
+            mTexPalmNormal = Texture2D::createFromFile(texPath + "palm.normal.png");
+            mTexPalmSpecular = Texture2D::createFromFile(texPath + "palm.specular.png");
 /// ============= STUDENT CODE END =============
         }
 
