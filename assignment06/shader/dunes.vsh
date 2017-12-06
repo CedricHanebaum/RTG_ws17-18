@@ -50,8 +50,8 @@ float getTerrainHeight(vec2 pos)
 {
     float taperMax = 2.5 * poolSize;
 
-    float noiseL = 8 * cnoise(pos * 20);
-    float noiseS = 0.2 * cnoise(pos * 0.5); noiseS = 0;
+    float noiseL = 40 * cnoise(pos * 0.01);
+    float noiseS = 0.2 * cnoise(pos * 5); noiseS = 0;
 
     return taper(length(pos), poolSize, taperMax) * ((noiseL + noiseS) / 2);
 }
