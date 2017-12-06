@@ -36,7 +36,19 @@ void RigidBody::calculateMassAndInertia()
 	{
 		// s.position (sample position in body space)
 		// s.mass     (sample mass)
+        mass += s.mass;
+        cog += s.mass * s.position; // maybe convert position to world space here?
 	}
+
+    cog *= (1 / mass);
+
+    for(auto const& s: samples) {
+        auto r = s.position - cog;
+        // column major order
+        inertia += s.mass * glm::mat3(glm::vec3(std::pow(r.y, 2) + std::pow(r.z, 2), -r.y * r.x, -r.z * r.x),
+                                      glm::vec3(-r.x * r.y, std::pow(r.z, 2) + std::pow(r.x, 2), -r.z * r.y),
+                                      glm::vec3(-r.x * r.z, -r.y * r.z, std::pow(r.x, 2) + std::pow(r.y, 2)));
+    }
 
 /// ============= STUDENT CODE END =============
 
@@ -127,11 +139,27 @@ void RigidBody::update(float elapsedSeconds)
 ///
 /// ============= STUDENT CODE BEGIN =============
 
+        // Debug
+        omega = glm::vec3(0, 1, 0);
+
 		// update
 		// - linearMomentum
+        linearMomentum = linearForces * elapsedSeconds;
 		// - linearPosition
+        auto v = (1 / mass) * linearMomentum;
+        linearPosition += v * elapsedSeconds;
 		// - angularMomentum
+        angularMomentum = angularForces * elapsedSeconds;
 		// - angularPosition
+
+        // Hier stimmt irgendwas nicht. angularPosition[1] ist zu beginn (0, 1, 0)^T.
+        // Nach dem Kreuzprodukt kommt dann (0, 0, 0)^T raus. Unten beim normalisieren wird dann
+        // daraus NaN. Darum (wahrscheinlich) wird nichts angezeigt.
+        glm::vec3 r1 = glm::cross(omega, glm::column(angularPosition, 0)) * elapsedSeconds;
+        glm::vec3 r2 = glm::cross(omega, glm::column(angularPosition, 1)) * elapsedSeconds;
+        glm::vec3 r3 = glm::cross(omega, glm::column(angularPosition, 2)) * elapsedSeconds;
+        angularPosition = glm::mat3(r1, r2, r3);
+
 
 /// ============= STUDENT CODE END =============
 

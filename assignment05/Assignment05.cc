@@ -162,16 +162,33 @@ void Assignment05::renderScene(camera::CameraBase* cam, bool shadowPass)
                 auto sphere = std::dynamic_pointer_cast<SphereShape>(s);
                 auto box = std::dynamic_pointer_cast<BoxShape>(s);
 
+                auto rbTransform = mRigidBody.getTransform();
+
                 // draw spheres
                 if (sphere)
                 {
-                    // TODO
+                    glm::mat4 modelMatrix = glm::mat4();
+                    auto r = sphere->radius;
+                    modelMatrix *= rbTransform;
+                    modelMatrix *= sphere->transform;
+                    modelMatrix = glm::scale(modelMatrix, glm::vec3(r, r, r));
+
+                    shader.setUniform("uModelMatrix", modelMatrix);
+
+                    mMeshSphere->bind().draw();
                 }
 
                 // draw boxes
                 if (box)
                 {
-                    // TODO
+                    glm::mat4 modelMatrix = glm::mat4();
+                    modelMatrix *= rbTransform;
+                    modelMatrix *= box->transform;
+                    modelMatrix = glm::scale(modelMatrix, box->halfExtent);
+
+                    shader.setUniform("uModelMatrix", modelMatrix);
+
+                    mMeshCube->bind().draw();
                 }
             }
 
@@ -282,7 +299,7 @@ void Assignment05::loadPreset(Preset preset)
 ///     - build a line mesh for one single line
 ///
 /// Notes:
-///     - store the VertexArray to the member variable mMeshLine
+///     - store the VertexArray in the member variable mMeshLine
 ///     - the primitive type is GL_LINES
 ///     - for the drawing, you have to set some uniforms for mShaderLine
 ///     - uViewMatrix and uProjectionMatrix are automatically set
@@ -292,12 +309,42 @@ void Assignment05::loadPreset(Preset preset)
 
 void Assignment05::buildLineMesh()
 {
-    // TODO
+    std::vector<glm::vec3> vertexData = {
+            glm::vec3(0, 0, 0),
+            glm::vec3(1, 0, 0)
+    };
+
+    SharedArrayBuffer ab = ArrayBuffer::create();
+    ab->defineAttribute<glm::vec3>("vPosition");
+    ab->bind().setData(vertexData);
+
+    mMeshLine = VertexArray::create(ab, GL_LINES);
 }
 
 void Assignment05::drawLine(glm::vec3 from, glm::vec3 to, glm::vec3 color)
 {
-    // TODO
+    glm::vec3 b = to - from;
+    glm::mat4 modelMatrix = glm::mat4(1.0f);
+
+    // Calculate rotation
+    auto sscp = [](glm::vec3 v) {
+        return glm::mat3(glm::vec3(0, v.z, -v.y), glm::vec3(-v.z, 0, v.x), glm::vec3(v.y, -v.x, 0));
+    };
+    glm::vec3 v = glm::cross(glm::vec3(1.0f, 0.0f, 0.0f), glm::normalize(b));
+    auto s = glm::length(v);
+    auto c = glm::dot(glm::vec3(1.0f, 0.0f, 0.0f), glm::normalize(b));
+    glm::mat3 rotation = s == 0 ? glm::mat3(1.0f) : glm::mat3(1.0f) + sscp(v) + (sscp(v) * sscp(v)) * ((1.0f - c) / std::pow(s, 2));
+
+    modelMatrix = glm::translate(modelMatrix, from);
+    modelMatrix *= glm::mat4(rotation);
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(glm::length(b), 0, 0));
+
+    auto p = mShaderLine->use();
+
+    p.setUniform("uColor", color);
+    p.setUniform("uModelMatrix", modelMatrix);
+
+    mMeshLine->bind().draw();
 }
 
 /// ============= STUDENT CODE END =============

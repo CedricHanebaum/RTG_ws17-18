@@ -135,7 +135,12 @@ void Cloth::updateForces()
     ///     - mass is stored in the particle
     ///
     /// ============= STUDENT CODE BEGIN =============
-
+    for (auto& p : particles)
+    {
+        glm::vec3 a = glm::vec3(0,gravity,0);
+        p.accumulatedForces += a*p.mass;
+    }
+    
     /// ============= STUDENT CODE END =============
 
     // Apply Hooke's Law
@@ -160,14 +165,15 @@ void Cloth::updateForces()
 
         auto x = glm::length(s.p0->position - s.p1->position) - s.restDistance;
 
-        auto f0 = -springK * x * glm::normalize(s.p0->position - s.p1->position);
-        auto f1 = -springK * x * glm::normalize(s.p1->position - s.p0->position);
+        auto f0 = springK * x * glm::normalize(s.p1->position - s.p0->position);
+        auto f1 = springK * x * glm::normalize(s.p0->position - s.p1->position);
 
         s.p0->accumulatedForces += f0;
         s.p1->accumulatedForces += f1;
 
         s.p0->stress += x * 100;
         s.p1->stress += x * 100;
+
 
         /// ============= STUDENT CODE END =============
     }
@@ -223,7 +229,7 @@ void Cloth::updateMotion(float elapsedSeconds)
         /// ============= STUDENT CODE BEGIN =============
 
         glm::vec3 a = p.accumulatedForces / p.mass;
-        p.velocity += a * elapsedSeconds;
+        p.velocity += (a * elapsedSeconds)/2;
         p.position += p.velocity * elapsedSeconds;
 
         /// ============= STUDENT CODE END =============
@@ -248,7 +254,11 @@ void Cloth::addSphereCollision(glm::vec3 center, float radius)
         ///     - After projection, the velocity vector lies in that plane
         ///
         /// ============= STUDENT CODE BEGIN =============
-
+        glm::vec3 n = p.position - center;
+        if (glm::length(n) < radius) {
+            p.velocity -= glm::dot(p.velocity, glm::normalize(n))*glm::normalize(n);
+            p.position =  center + radius*glm::normalize(p.position - center);
+        }
         /// ============= STUDENT CODE END =============
     }
 }
