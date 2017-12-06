@@ -4,11 +4,7 @@
 
 #include <cassert>
 
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/euler_angles.hpp>
-#include <glm/glm.hpp>
-#include <glm/gtx/string_cast.hpp>
+#include <glm/ext.hpp>
 
 #ifdef GLOW_DEBUG
 namespace
@@ -74,44 +70,28 @@ GenericCamera::GenericCamera(const std::string &_state)
 
 void GenericCamera::FPSstyleLookAround(float _deltaX, float _deltaY)
 {
-    float yaw = 0.0f;
-    float pitch = 0.0f;
-    glm::mat3 R = getRotationMatrix3();
+    auto fwd = getForwardDirection();
 
-    // get roll / pitch / yaw from the current rotation matrix:
-    float yaw1 = asin(-R[2][0]);
-    float yaw2 = glm::pi<float>() - asin(-R[2][0]);
+    auto altitude = glm::atan(fwd.y, length(glm::vec2(fwd.x, fwd.z)));
+    auto azimuth = glm::atan(fwd.z, fwd.x);
 
-    float pitch1 = (cos(yaw1) > 0) ? atan2(R[2][1], R[2][2]) : atan2(-R[2][1], -R[2][2]);
-    float pitch2 = (cos(yaw2) > 0) ? atan2(R[2][1], R[2][2]) : atan2(-R[2][1], -R[2][2]);
+    azimuth += _deltaX;
+    altitude = glm::clamp(altitude - _deltaY, -0.499f * glm::pi<float>(), 0.499f * glm::pi<float>());
 
-    float roll1 = (cos(yaw1) > 0) ? atan2(R[1][0], R[0][0]) : atan2(-R[1][0], -R[0][0]);
-    float roll2 = (cos(yaw2) > 0) ? atan2(R[1][0], R[0][0]) : atan2(-R[1][0], -R[0][0]);
+    auto caz = glm::cos(azimuth);
+    auto saz = glm::sin(azimuth);
+    auto cal = glm::cos(altitude);
+    auto sal = glm::sin(altitude);
 
-    // we assume no roll at all, in that case one of the roll variants will be 0.0
-    // if not, use the smaller one -> minimize the camera "jump" as this will destroy
-    // information
-    if (std::abs(roll1) <= std::abs(roll2))
-    {
-        yaw = -yaw1;
-        pitch = -pitch1;
-    }
-    else
-    {
-        yaw = -yaw2;
-        pitch = -pitch2;
-    }
+    fwd = glm::vec3( //
+        cal * caz,   //
+        sal,         //
+        cal * saz   //
+    );
+    auto right = normalize(cross(fwd, glm::vec3(0, 1, 0)));
+    auto up = cross(right, fwd);
 
-    // add rotation diffs given:
-    yaw = yaw + _deltaX;
-    pitch = glm::clamp(pitch + _deltaY, -0.5f * glm::pi<float>(), 0.5f * glm::pi<float>());
-
-    // create rotation matices, seperated so we have full control over the order:
-    glm::mat4 newRotY = glm::yawPitchRoll(yaw, 0.0f, 0.0f);
-    glm::mat4 newRotX = glm::yawPitchRoll(0.0f, pitch, 0.0f);
-
-    // multiplication order is important to prevent roll:
-    setRotationMatrix(newRotX * newRotY);
+    setRotationMatrix(transpose(glm::mat3(right, up, -fwd)));
 }
 
 void GenericCamera::rotateAroundTaget_GlobalAxes(float _x, float _y, float _z)

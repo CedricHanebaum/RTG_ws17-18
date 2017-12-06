@@ -1,15 +1,15 @@
 #pragma once
 
+#include <glm/common.hpp>
+#include <glm/geometric.hpp>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
-#include <glm/geometric.hpp>
-#include <glm/common.hpp>
 
 #include <glow/common/shared.hh>
 
-#include <glow/objects/VertexArray.hh>
 #include <glow/objects/ArrayBuffer.hh>
 #include <glow/objects/ElementArrayBuffer.hh>
+#include <glow/objects/VertexArray.hh>
 
 namespace glow
 {
@@ -107,17 +107,17 @@ public:
                 auto baseIndex = vi;
 
                 vertices[vi++] = gen(mix(minCoord, maxCoord, (mid - left - top) * .5f + .5f), n, left, {0, 0});
-                vertices[vi++] = gen(mix(minCoord, maxCoord, (mid - left + top) * .5f + .5f), n, left, {0, 1});
                 vertices[vi++] = gen(mix(minCoord, maxCoord, (mid + left - top) * .5f + .5f), n, left, {1, 0});
                 vertices[vi++] = gen(mix(minCoord, maxCoord, (mid + left + top) * .5f + .5f), n, left, {1, 1});
+                vertices[vi++] = gen(mix(minCoord, maxCoord, (mid - left + top) * .5f + .5f), n, left, {0, 1});
 
                 indices[ii++] = baseIndex + 0;
+                indices[ii++] = baseIndex + 3;
                 indices[ii++] = baseIndex + 1;
-                indices[ii++] = baseIndex + 2;
 
-                indices[ii++] = baseIndex + 1;
                 indices[ii++] = baseIndex + 3;
                 indices[ii++] = baseIndex + 2;
+                indices[ii++] = baseIndex + 1;
             }
         }
 
