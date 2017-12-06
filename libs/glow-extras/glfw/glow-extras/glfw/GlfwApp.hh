@@ -246,6 +246,9 @@ protected:
 public:
     /// Initializes GLFW and GLOW, and runs until window is closed
     int run(int argc, char* argv[]);
+
+public:
+	virtual ~GlfwApp(); // virtual dtor
 };
 }
 }

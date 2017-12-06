@@ -7,6 +7,8 @@ namespace limits
 {
 /// number of texture units
 extern int maxCombinedTextureImageUnits;
+/// max number of vertices per patch
+extern int maxPatchVertices;
 /// max value for anisotropic filtering
 extern float maxAnisotropy;
 

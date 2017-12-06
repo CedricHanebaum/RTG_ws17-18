@@ -74,6 +74,16 @@ SharedVertexArray VertexArray::create(const std::vector<SharedArrayBuffer> &abs,
     return vao;
 }
 
+void VertexArray::BoundVertexArray::updatePatchParameters()
+{
+    if (vao->mPrimitiveMode == GL_PATCHES)
+    {
+        if (vao->mVerticesPerPatch <= 1)
+            glow::error() << "Invalid number of patches per vertices (forgot to call setVerticesPerPatch?)";
+        glPatchParameteri(GL_PATCH_VERTICES, vao->mVerticesPerPatch);
+    }
+}
+
 void VertexArray::BoundVertexArray::draw(GLsizei instanceCount)
 {
     if (!isCurrent())
@@ -85,6 +95,8 @@ void VertexArray::BoundVertexArray::draw(GLsizei instanceCount)
 
     if (vao->isEmpty())
         glow::warning() << "Drawing empty VertexArray";
+
+    updatePatchParameters();
 
     if (vao->mElementArrayBuffer)
     {
@@ -122,6 +134,8 @@ void VertexArray::BoundVertexArray::drawRange(GLsizei start, GLsizei end, GLsize
 
     if (vao->isEmpty())
         glow::warning() << "Drawing empty VertexArray";
+
+    updatePatchParameters();
 
     if (vao->mElementArrayBuffer)
     {
@@ -164,6 +178,8 @@ void VertexArray::BoundVertexArray::drawTransformFeedback(const SharedTransformF
 
     checkValidGLOW();
     negotiateBindings();
+
+    updatePatchParameters();
 
     GLOW_RUNTIME_ASSERT(vao->mElementArrayBuffer == nullptr, "Cannot use drawFeedback with an index buffer", return );
     GLOW_RUNTIME_ASSERT(!feedback->isBound(), "Cannot use drawFeedback when feedback is still bound", return );

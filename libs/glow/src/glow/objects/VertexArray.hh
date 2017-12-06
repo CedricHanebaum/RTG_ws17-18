@@ -31,6 +31,8 @@ private:
 
     /// OGL primitive mode
     GLenum mPrimitiveMode;
+    /// Number of vertices per patch (for primitive mode GL_PATCHES)
+    int mVerticesPerPatch = -1;
 
     /// Attached element array buffer
     SharedElementArrayBuffer mElementArrayBuffer;
@@ -53,6 +55,7 @@ public: // getter
     GLuint getObjectName() const { return mObjectName; }
     GLenum getPrimitiveMode() const { return mPrimitiveMode; }
     void setPrimitiveMode(GLenum mode) { mPrimitiveMode = mode; }
+    void setVerticesPerPatch(int cnt) { mVerticesPerPatch = cnt; }
     SharedLocationMapping const& getAttributeMapping() const { return mAttributeMapping; }
     SharedElementArrayBuffer const& getElementArrayBuffer() const { return mElementArrayBuffer; }
     std::vector<VertexArrayAttribute> const& getAttributes() const { return mAttributes; }
@@ -129,6 +132,9 @@ public:
         /// returns true iff it's safe to use this bound class
         /// otherwise, runtime error
         bool isCurrent() const;
+
+        /// updates patch parameters if GL_PATCHES is used
+        void updatePatchParameters();
 
     public:
         BoundVertexArray(BoundVertexArray&&); // allow move

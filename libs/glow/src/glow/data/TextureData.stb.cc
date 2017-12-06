@@ -117,6 +117,11 @@ SharedTextureData TextureData::loadWithStb(const std::string &filename, const st
         return nullptr;
     }
 
+	// high-quality default parameters:
+	tex->setAnisotropicFiltering(16.0f);
+	tex->setMagFilter(GL_LINEAR);
+	tex->setMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+
     return tex;
 }
 
