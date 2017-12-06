@@ -237,6 +237,20 @@ void Assignment06::renderScene(camera::CameraBase* cam, RenderPass pass)
 ///     - do not forget to enable culling after rendering
 ///
 /// ============= STUDENT CODE BEGIN =============
+
+        setUpShader(mShaderPalms, cam, pass);
+        auto shader = mShaderPalms->use();
+
+        shader.setTexture("uTexPalmColor", mTexPalmColor);
+        shader.setTexture("uTexPalmNormal", mTexPalmNormal);
+        shader.setTexture("uTexPalmSpecular", mTexPalmSpecular);
+
+        shader.setUniform("uPalmPos", glm::vec3(10, 0, 5));
+
+        GLOW_SCOPED(disable, GL_CULL_FACE);
+
+        mMeshPalms->bind().draw(1);
+
 /// ============= STUDENT CODE END =============
     }
 
