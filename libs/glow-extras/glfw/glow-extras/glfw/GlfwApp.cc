@@ -635,3 +635,8 @@ int GlfwApp::run(int argc, char *argv[])
 
     return 0;
 }
+
+GlfwApp::~GlfwApp()
+{
+	// empty
+}

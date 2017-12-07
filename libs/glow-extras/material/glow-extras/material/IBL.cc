@@ -61,6 +61,9 @@ glow::SharedTextureCubeMap glow::material::IBL::createEnvMapGGX(const glow::Shar
         }
     }
 
+	// we manually calculated all mipmaps
+	tex->setMipmapsGenerated(true);
+
     return tex;
 }
 

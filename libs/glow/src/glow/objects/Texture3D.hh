@@ -70,7 +70,7 @@ public: // getter
     bool isStorageImmutable() const override { return mStorageImmutable; }
 
     /// returns true iff mipmaps are used (based on min filter)
-    bool hasMipmapsEnabled() const;
+    bool hasMipmapsEnabled() const override;
     /// returns true iff mipmaps were generated via bind().generateMipmaps() (and are still valid)
     bool areMipmapsGenerated() const override { return mMipmapsGenerated; }
     /// Manually sets the internal flag if mipmaps were generated
@@ -266,7 +266,7 @@ public:
     /// Clear via glm or c++ type (see gltypeinfo)
     /// CAREFUL: pointers do not work!
     template <typename DataT>
-    void clear(DataT&& data, int mipmapLevel = 0)
+    void clear(DataT const& data, int mipmapLevel = 0)
     {
         clear(glTypeOf<DataT>::format, glTypeOf<DataT>::type, (const GLvoid*)&data, mipmapLevel);
     }

@@ -246,7 +246,7 @@ public:
     /// Clear via glm or c++ type (see gltypeinfo)
     /// CAREFUL: pointers do not work!
     template <typename DataT>
-    void clear(DataT&& data)
+    void clear(DataT const& data)
     {
         clear(glTypeOf<DataT>::format, glTypeOf<DataT>::type, (const GLvoid*)&data);
     }

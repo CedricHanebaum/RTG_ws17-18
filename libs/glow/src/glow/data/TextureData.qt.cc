@@ -69,6 +69,11 @@ SharedTextureData TextureData::loadWithQt(const std::string &filename, const std
     tex->setHeight(height);
     tex->addSurface(surface);
 
+	// high-quality default parameters:
+	tex->setAnisotropicFiltering(16.0f);
+	tex->setMagFilter(GL_LINEAR);
+	tex->setMinFilter(GL_LINEAR_MIPMAP_LINEAR);
+
     return tex;
 }
 
