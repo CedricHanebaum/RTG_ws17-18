@@ -14,12 +14,16 @@ uniform mat4 uProjectionMatrix;
 /// ============= STUDENT CODE BEGIN =============
 
 // maybe some attributes?
+in vec3 vPosition;
 
 // maybe some uniforms?
+uniform mat4 uModelMatrix;
 
 void main() 
 {
-    gl_Position = ...;
+    vec4 worldPos = uModelMatrix * vec4(vPosition, 1.0);
+    vec4 viewPos = uViewMatrix * worldPos;
+    gl_Position = uProjectionMatrix * viewPos;
 }
 
 /// ============= STUDENT CODE END =============
