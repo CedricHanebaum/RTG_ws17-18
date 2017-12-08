@@ -91,11 +91,11 @@ vec4 fxaa(sampler2DRect tex, vec2 fragCoord) {
 
 uint wang_hash(uint seed)
 {
-    seed = (seed ^ 61) ^ (seed >> 16);
-    seed *= 9;
-    seed = seed ^ (seed >> 4);
-    seed *= 0x27d4eb2d;
-    seed = seed ^ (seed >> 15);
+    seed = (seed ^ 61u) ^ (seed >> 16u);
+    seed *= 9u;
+    seed = seed ^ (seed >> 4u);
+    seed *= 0x27D4EB2Du;
+    seed = seed ^ (seed >> 15u);
     return seed;
 }
 
