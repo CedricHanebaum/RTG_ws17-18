@@ -71,7 +71,7 @@ if(NOT MSVC)
         -Wextra
         -Wpedantic
         # -Wshadow # glm has a lot of these unfortunately
-        -Wstrict-overflow
+        # -Wstrict-overflow # false positives!
         -Wno-unused-parameter # we don't consider this an error        
         )
     if(GCC)
