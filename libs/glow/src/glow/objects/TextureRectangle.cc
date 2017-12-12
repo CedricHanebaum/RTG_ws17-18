@@ -327,7 +327,30 @@ void TextureRectangle::clear(GLenum format, GLenum type, const GLvoid* data)
 {
     checkValidGLOW();
 #if GLOW_OPENGL_VERSION >= 44
-    glClearTexImage(mObjectName, 0, format, type, data);
+
+    if (OGLVersion.total < 44)
+    {
+        glow::warning() << "Using fallback for Texture::clear because OpenGL Version is lower than 4.4.";
+        glow::warning() << "  This has (severe) performance implications (see #43)";
+
+        // assemble img
+        std::vector<uint8_t> rawdata;
+        int stride = channelsOfFormat(format) * sizeOfTypeInBytes(type);
+        int w = mWidth;
+        int h = mHeight;
+        rawdata.resize(stride * w * h);
+        auto bdata = (uint8_t const *)data;
+        for (auto i = 0; i < w * h; ++i)
+            std::copy(bdata, bdata + stride, rawdata.data() + i * stride);
+
+        // upload
+        bind().setData(getInternalFormat(), w, h, format, type, rawdata.data());
+
+    }
+    else
+    {
+        glClearTexImage(mObjectName, 0, format, type, data);
+    }
 #else
     error() << "TextureRectangle::clear is only supported for OpenGL 4.4+";9
 #endif

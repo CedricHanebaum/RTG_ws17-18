@@ -20,7 +20,7 @@ float shadowing(vec3 worldPos, vec3 L)
 
     shadowPos.xyz = shadowPos.xyz * 0.5 + 0.5;
 
-    return texture(uShadowMap, shadowPos.xyz).x;
+    return texture(uShadowMap, shadowPos.xyz);
 }
 
 // DO NOT MULTIPLY BY COS THETA

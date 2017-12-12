@@ -329,7 +329,7 @@ void Assignment06::setUpFluidShader(const SharedProgram& program, float elapsedS
 void Assignment06::buildPoolMesh()
 {
     std::vector<Vertex> vertices;
-    std::vector<uint8_t> indices;
+    std::vector<uint16_t> indices;
 
     auto addQuad = [&](glm::vec3 start, glm::vec3 dirX, glm::vec3 dirY) {
         auto v00 = start;
@@ -552,7 +552,7 @@ void Assignment06::init()
             {0.5, 0.5} //
         };
 
-        std::vector<uint8_t> indices = {
+        std::vector<uint16_t> indices = {
             0, 1, 4, //
             1, 2, 4, //
             2, 3, 4, //

@@ -355,7 +355,32 @@ void Texture2D::clear(GLenum format, GLenum type, const GLvoid* data, int mipmap
 {
     checkValidGLOW();
 #if GLOW_OPENGL_VERSION >= 44
-    glClearTexImage(mObjectName, mipmapLevel, format, type, data);
+
+    if (OGLVersion.total < 44)
+    {
+        glow::warning() << "Using fallback for Texture::clear because OpenGL Version is lower than 4.4.";
+        glow::warning() << "  This has (severe) performance implications (see #43)";
+
+        // assemble img
+        std::vector<uint8_t> rawdata;
+        int stride = channelsOfFormat(format) * sizeOfTypeInBytes(type);
+        int w = mWidth;
+        int h = mHeight;
+        w = glm::max(1, w >> mipmapLevel);
+        h = glm::max(1, h >> mipmapLevel);
+        rawdata.resize(stride * w * h);
+        auto bdata = (uint8_t const *)data;
+        for (auto i = 0; i < w * h; ++i)
+            std::copy(bdata, bdata + stride, rawdata.data() + i * stride);
+
+        // upload
+        bind().setData(getInternalFormat(), w, h, format, type, rawdata.data(), mipmapLevel);
+
+    }
+    else
+    {
+        glClearTexImage(mObjectName, mipmapLevel, format, type, data);
+    }
 #else
     error() << "Texture2D::clear is only supported for OpenGL 4.4+";9
 #endif

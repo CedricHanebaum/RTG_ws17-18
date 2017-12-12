@@ -342,7 +342,18 @@ void Texture1DArray::clear(GLenum format, GLenum type, const GLvoid* data, int m
 {
     checkValidGLOW();
 #if GLOW_OPENGL_VERSION >= 44
-    glClearTexImage(mObjectName, mipmapLevel, format, type, data);
+
+    if (OGLVersion.total < 44)
+    {
+        glow::warning() << "Using fallback for Texture::clear because OpenGL Version is lower than 4.4.";
+        glow::warning() << "  This has (severe) performance implications (see #43)";
+
+        glow::error() << "Not implemented.";
+    }
+    else
+    {
+        glClearTexImage(mObjectName, mipmapLevel, format, type, data);
+    }
 #else
     error() << "Texture1DArray::clear is only supported for OpenGL 4.4+";9
 #endif
