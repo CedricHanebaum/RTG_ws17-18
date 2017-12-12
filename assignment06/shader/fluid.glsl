@@ -116,11 +116,19 @@ float updateHeight(ivec2 coords)
 /// ============= STUDENT CODE BEGIN =============
 float updateFluxX(ivec2 coords)
 {
-    return 0;
+    float delta = -9.81 *
+        (height(coords.x, coords.y) - height(coords.x - 1, coords.y)) *
+        ((height(coords.x, coords.y) + height(coords.x - 1, coords.y)) / 2);
+    float fX = fluxX(coords.x, coords.y) + delta * uDeltaT;
+    return clamp(mix(0, fX, pow(0.5, uLinearDragTau)), -5, 5);
 }
 
 float updateFluxY(ivec2 coords)
 {
-    return 0;
+    float delta = -9.81 *
+        (height(coords.x, coords.y) - height(coords.x, coords.y - 1)) *
+        ((height(coords.x, coords.y) + height(coords.x, coords.y - 1)) / 2);
+    float fY = fluxY(coords.x, coords.y) + delta * uDeltaT;
+    return clamp(mix(0, fY, pow(0.5, uLinearDragTau)), -5, 5);
 }
 /// ============= STUDENT CODE END =============
