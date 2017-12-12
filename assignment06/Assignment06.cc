@@ -245,7 +245,10 @@ void Assignment06::renderScene(camera::CameraBase* cam, RenderPass pass)
         shader.setTexture("uTexPalmNormal", mTexPalmNormal);
         shader.setTexture("uTexPalmSpecular", mTexPalmSpecular);
 
-        shader.setUniform("uPalmPos", glm::vec3(10, 0, 5));
+        float poolSizeX = mFluidSizeX * mFluidResolution * 0.5 + mPoolBorder * 0.5;
+        float poolSizeY = mFluidSizeY * mFluidResolution * 0.5 + mPoolBorder * 0.5;
+
+        shader.setUniform("uPalmPos", glm::vec3(poolSizeX + 3, 0, poolSizeY + 3));
 
         GLOW_SCOPED(disable, GL_CULL_FACE);
 
