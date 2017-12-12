@@ -91,7 +91,7 @@ float updateHeight(ivec2 coords)
     float area = uFluidResolution * uFluidResolution;
     float delta = -(1/area) * div(coords.x, coords.y);
     float height = height(coords.x, coords.y) + delta * uDeltaT;
-    return max(mix(height - delta * uDeltaT, height, pow(0.5, uViscosityTau)), eps);
+    return max(mix(height - delta * uDeltaT, height, pow(0.5, uDeltaT / uViscosityTau)), eps);
 }
 /// ============= STUDENT CODE END =============
 
@@ -120,7 +120,7 @@ float updateFluxX(ivec2 coords)
         (height(coords.x, coords.y) - height(coords.x - 1, coords.y)) *
         ((height(coords.x, coords.y) + height(coords.x - 1, coords.y)) / 2);
     float fX = fluxX(coords.x, coords.y) + delta * uDeltaT;
-    return clamp(mix(0, fX, pow(0.5, uLinearDragTau)), -5, 5);
+    return clamp(mix(0, fX, pow(0.5, uDeltaT / uLinearDragTau)), -5, 5);
 }
 
 float updateFluxY(ivec2 coords)
@@ -129,6 +129,6 @@ float updateFluxY(ivec2 coords)
         (height(coords.x, coords.y) - height(coords.x, coords.y - 1)) *
         ((height(coords.x, coords.y) + height(coords.x, coords.y - 1)) / 2);
     float fY = fluxY(coords.x, coords.y) + delta * uDeltaT;
-    return clamp(mix(0, fY, pow(0.5, uLinearDragTau)), -5, 5);
+    return clamp(mix(0, fY, pow(0.5, uDeltaT / uLinearDragTau)), -5, 5);
 }
 /// ============= STUDENT CODE END =============
