@@ -49,12 +49,14 @@ float heightF(float cx, float cy)
 /// ============= STUDENT CODE BEGIN =============
 float div(int cx, int cy)
 {
-    return 0;
+    return fluxX(cx + 1, cy) - fluxX(cx, cy) +
+        fluxY(cx, cy + 1) - fluxY(cx, cy);
 }
 // Query divergence (linearly interpolated)
 float divF(float cx, float cy)
 {
-    return 0;
+    return fluxXF(cx + 1, cy) - fluxXF(cx, cy) +
+        fluxYF(cx, cy + 1) - fluxYF(cx, cy);
 }
 /// ============= STUDENT CODE END =============
 
@@ -84,7 +86,12 @@ float divF(float cx, float cy)
 /// ============= STUDENT CODE BEGIN =============
 float updateHeight(ivec2 coords)
 {
-    return 2.0;
+    float eps = 0.001;
+
+    float area = uFluidResolution * uFluidResolution;
+    float delta = -(1/area) * div(coords.x, coords.y);
+    float height = height(coords.x, coords.y) + delta * uDeltaT;
+    return max(mix(height - delta * uDeltaT, height, pow(0.5, uViscosityTau)), eps);
 }
 /// ============= STUDENT CODE END =============
 
