@@ -197,11 +197,11 @@ bool GlfwApp::onMousePosition(double x, double y)
         float ax = dx / mWindowWidth * mCameraTurnSpeed;
         float ay = dy / mWindowHeight * mCameraTurnSpeed;
 
-        if (mMouseRight && !alt && !ctrl) // from cam
+        if (mUseDefaultCameraHandlingRight && mMouseRight && !alt && !ctrl) // from cam
         {
             mCamera->FPSstyleLookAround(ax, ay);
         }
-        if (mMouseLeft && !shift && !alt && !ctrl) // around target
+        if (mUseDefaultCameraHandlingLeft && mMouseLeft && !shift && !alt && !ctrl) // around target
         {
             auto fwd = mCamera->getForwardDirection();
 
@@ -252,7 +252,7 @@ bool GlfwApp::onMouseButton(double x, double y, int button, int action, int mods
         onResetView();
 
     // Double [LMB] (no mods) -> center on pos
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && clickCount > 1 && mods == 0)
+    if (mUseDefaultCameraHandlingLeft && button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && clickCount > 1 && mods == 0)
     {
         glm::vec3 pos;
         float depth;
@@ -461,7 +461,15 @@ void GlfwApp::endRender()
 {
     // draw the tweak bar(s)
     if (mDrawTweakbars)
+    {
         TwDraw();
+
+        // unbind TweakBar stuff
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glUseProgram(0);
+        glBindVertexArray(0);
+    }
 
     // Swap front and back buffers
     glfwSwapBuffers(mWindow);
@@ -567,6 +575,9 @@ int GlfwApp::run(int argc, char *argv[])
     TwInit(TW_OPENGL_CORE, NULL); // for core profile
     TwWindowSize(mWindowWidth, mWindowHeight);
     mTweakbar = TwNewBar("Tweakbar");
+
+    // unbind any ogl object (especially from AntTweakBar)
+    glow::unbindOpenGLObjects();
 
     // input callbacks
     {

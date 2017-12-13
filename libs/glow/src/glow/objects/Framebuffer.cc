@@ -257,8 +257,10 @@ void Framebuffer::BoundFramebuffer::attachColor(const std::string &fragName, con
             a.texture = tex;
             a.mipmapLevel = mipmapLevel;
             a.layer = layer;
-            return;
+            return; // attachment name found
         }
+
+    // not found: add it
     buffer->mColorAttachments.push_back({fragName, tex, mipmapLevel, layer});
 }
 
@@ -343,10 +345,22 @@ Framebuffer::BoundFramebuffer::BoundFramebuffer(Framebuffer *buffer) : buffer(bu
 
     glBindFramebuffer(GL_FRAMEBUFFER, buffer->getObjectName());
 
-    GLenum drawBuffers[8] = {};
-    for (auto i = 0u; i < buffer->mColorAttachments.size(); ++i)
-        drawBuffers[i] = GL_COLOR_ATTACHMENT0 + i;
-    glDrawBuffers(buffer->mColorAttachments.size(), drawBuffers);
+    // optimized: a single buffer
+    switch (buffer->mColorAttachments.size())
+    {
+    case 0:
+        glDrawBuffer(GL_NONE);
+        break;
+    case 1:
+        glDrawBuffer(GL_COLOR_ATTACHMENT0);
+        break;
+    default:
+        GLenum drawBuffers[8] = {};
+        for (auto i = 0u; i < buffer->mColorAttachments.size(); ++i)
+            drawBuffers[i] = GL_COLOR_ATTACHMENT0 + i;
+        glDrawBuffers(buffer->mColorAttachments.size(), drawBuffers);
+        break;
+    }
 
     if (buffer->mAutoViewport)
     {
@@ -376,6 +390,16 @@ Framebuffer::BoundFramebuffer::BoundFramebuffer(Framebuffer::BoundFramebuffer &&
     rhs.previousBuffer = -1;
 }
 
+template <size_t N>
+static bool isSingleBuffer(std::array<GLenum, N> const &bufs)
+{
+    for (size_t i = 1; i < N; ++i)
+        if (bufs[i] != GL_NONE)
+            return false;
+
+    return true;
+}
+
 Framebuffer::BoundFramebuffer::~BoundFramebuffer()
 {
     if (previousBuffer != -1) // if valid
@@ -385,7 +409,12 @@ Framebuffer::BoundFramebuffer::~BoundFramebuffer()
         glBindFramebuffer(GL_FRAMEBUFFER, previousBuffer);
         sCurrentBuffer = previousBufferPtr;
 
-        glDrawBuffers(previousDrawBuffers.size(), previousDrawBuffers.data());
+        // special behavior: GL_BACK can only appear in glDrawBuffer
+        // in general: optimized version for 0 or 1 buffers
+        if (isSingleBuffer(previousDrawBuffers))
+            glDrawBuffer(previousDrawBuffers[0]);
+        else
+            glDrawBuffers(previousDrawBuffers.size(), previousDrawBuffers.data());
 
         if (buffer->mAutoViewport)
             glViewport(previousViewport[0], previousViewport[1], previousViewport[2], previousViewport[3]);

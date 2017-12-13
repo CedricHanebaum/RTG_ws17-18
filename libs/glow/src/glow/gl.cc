@@ -1,6 +1,7 @@
 #include "gl.hh"
 
 #include "glow.hh"
+#include "limits.hh"
 
 void glow::restoreDefaultOpenGLState()
 {
@@ -98,4 +99,54 @@ void glow::restoreDefaultOpenGLState()
 
     // seamless cubemap filtering
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+}
+
+void glow::unbindOpenGLObjects()
+{
+    // unbind shader
+    glUseProgram(0);
+
+    // unbind VAOs
+    glBindVertexArray(0);
+
+    // unbind textures
+    for (auto i = 0; i < limits::maxCombinedTextureImageUnits; ++i)
+    {
+        glActiveTexture(GL_TEXTURE0 + i);
+        glBindTexture(GL_TEXTURE_1D, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindTexture(GL_TEXTURE_3D, 0);
+        glBindTexture(GL_TEXTURE_1D_ARRAY, 0);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+        glBindTexture(GL_TEXTURE_RECTANGLE, 0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, 0);
+        glBindTexture(GL_TEXTURE_BUFFER, 0);
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE_ARRAY, 0);
+    }
+
+    // unbind samplers
+    for (auto i = 0; i < limits::maxCombinedTextureImageUnits; ++i)
+        glBindSampler(i, 0);
+
+    // activate tex0 again
+    glActiveTexture(GL_TEXTURE0);
+
+    // unbind buffers
+    // must be last: otherwise unbinding EAB changes VAO
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0);
+    glBindBuffer(GL_COPY_READ_BUFFER, 0);
+    glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
+    glBindBuffer(GL_DISPATCH_INDIRECT_BUFFER, 0);
+    glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+    glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+    glBindBuffer(GL_QUERY_BUFFER, 0);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+    glBindBuffer(GL_TEXTURE_BUFFER, 0);
+    glBindBuffer(GL_TRANSFORM_FEEDBACK_BUFFER, 0);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }

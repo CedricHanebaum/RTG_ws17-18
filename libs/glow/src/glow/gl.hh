@@ -16,4 +16,13 @@ namespace glow
  *   * their derived calls (glBlendFunc, ...)
  */
 void restoreDefaultOpenGLState();
+
+/**
+ * @brief sets all OpenGL object bindings to 0
+ *
+ * CAUTION: calling it while a GLOW object is bound is undefined behavior!
+ *
+ * Can be used after 3rd party calls to make sure no state is accidentally changed
+ */
+void unbindOpenGLObjects();
 }

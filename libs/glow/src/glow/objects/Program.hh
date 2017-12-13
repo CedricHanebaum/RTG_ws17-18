@@ -134,6 +134,7 @@ public:
     public: // gl functions with use
         /// Binds a texture to a uniform
         /// Automatically chooses a free texture unit starting from 0
+        /// Setting nullptr is ok
         void setTexture(std::string const& name, SharedTexture const& tex);
         /// Binds a texture to an image sampler
         /// Requires an explicit binding location in shader (e.g. binding=N layout)
