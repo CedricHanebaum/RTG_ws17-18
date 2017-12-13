@@ -1,14 +1,14 @@
 #pragma once
 
-#include "glow/common/shared.hh"
 #include "glow/common/non_copyable.hh"
+#include "glow/common/shared.hh"
 #include "glow/common/warn_unused.hh"
 
 #include "glow/gl.hh"
 
-#include <vector>
-#include <string>
 #include <array>
+#include <string>
+#include <vector>
 
 namespace glow
 {
@@ -146,6 +146,7 @@ public:
     /// Binds this framebuffer.
     /// Unbinding is done when the returned object runs out of scope.
     GLOW_WARN_UNUSED BoundFramebuffer bind() { return {this}; }
+
 public: // static construction
     /// Creates an empty framebuffer
     /// Same as std::make_shared<Framebuffer>();

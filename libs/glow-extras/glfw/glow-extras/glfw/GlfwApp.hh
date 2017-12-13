@@ -102,9 +102,11 @@ private:
     double mOutputStatsInterval = 5.0; ///< number of seconds between stats output (0.0 for never)
     bool mQueryStats = true;           ///< if true, queries stats (vertices, fragments, ...)
 
-	bool mUseDefaultCamera = true;         ///< if true, uses default camera
-	bool mUseDefaultRendering = true;      ///< if true, uses default rendering pipeline setup (requires default cam)
+    bool mUseDefaultCamera = true;         ///< if true, uses default camera
+    bool mUseDefaultRendering = true;      ///< if true, uses default rendering pipeline setup (requires default cam)
     bool mUseDefaultCameraHandling = true; ///< if true, implements default cam handling
+    bool mUseDefaultCameraHandlingLeft = true;  ///< if true, activates left mouse button handling
+    bool mUseDefaultCameraHandlingRight = true; ///< if true, activates right mouse button handling
 
     double mCurrentTime = 0.0; ///< current frame time (starts with 0)
 
@@ -158,8 +160,10 @@ public:
     GLOW_GETTER(Camera);
     GLOW_GETTER(Pipeline);
 
-	GLOW_PROPERTY(UseDefaultCamera);
-	GLOW_PROPERTY(UseDefaultCameraHandling);
+    GLOW_PROPERTY(UseDefaultCamera);
+    GLOW_PROPERTY(UseDefaultCameraHandling);
+    GLOW_PROPERTY(UseDefaultCameraHandlingLeft);
+    GLOW_PROPERTY(UseDefaultCameraHandlingRight);
     GLOW_PROPERTY(CameraMoveSpeed);
     GLOW_PROPERTY(CameraTurnSpeed);
     GLOW_PROPERTY(CameraScrollSpeed);
@@ -171,6 +175,7 @@ public:
     glm::vec2 getMousePosition() const { return {mMouseX, mMouseY}; }
     GLFWwindow* window() const { return mWindow; }
     TwBar* tweakbar() const { return mTweakbar; }
+
 public:
     /// sets the current clipboard content
     void setClipboardString(std::string const& s) const;
@@ -248,7 +253,7 @@ public:
     int run(int argc, char* argv[]);
 
 public:
-	virtual ~GlfwApp(); // virtual dtor
+    virtual ~GlfwApp(); // virtual dtor
 };
 }
 }

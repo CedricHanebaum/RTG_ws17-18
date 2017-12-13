@@ -105,22 +105,28 @@ float wang_float(uint hash)
 }
 
 uniform sampler2DRect uTexture;
+uniform bool uUseFXAA;
+uniform bool uUseDithering;
 
 out vec3 fColor;
 
 void main() 
 {
     // FXAA
-    vec3 color = fxaa(uTexture, gl_FragCoord.xy).rgb;
+    vec3 color = uUseFXAA ? fxaa(uTexture, gl_FragCoord.xy).rgb :
+                            texelFetch(uTexture, ivec2(gl_FragCoord.xy)).rgb;
 
     // Linear to sRGB
     fColor = pow(color, vec3(1 / 2.224));
 
     // Dithering
-    uint seed = uint(gl_FragCoord.x) + uint(gl_FragCoord.y) * 8096u;
-    float r = wang_float(wang_hash(seed * 3u + 0u));
-    float g = wang_float(wang_hash(seed * 3u + 1u));
-    float b = wang_float(wang_hash(seed * 3u + 2u));
-    vec3 random = vec3(r, g, b);
-    fColor += (random - 0.5) / 256.0;
+    if (uUseDithering)
+    {
+        uint seed = uint(gl_FragCoord.x) + uint(gl_FragCoord.y) * 8096u;
+        float r = wang_float(wang_hash(seed * 3u + 0u));
+        float g = wang_float(wang_hash(seed * 3u + 1u));
+        float b = wang_float(wang_hash(seed * 3u + 2u));
+        vec3 random = vec3(r, g, b);
+        fColor += (random - 0.5) / 256.0;
+    }
 }

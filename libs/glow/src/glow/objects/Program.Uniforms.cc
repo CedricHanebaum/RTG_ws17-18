@@ -30,21 +30,35 @@ void Program::UsedProgram::setTexture(const std::string &name, const SharedTextu
 
     checkValidGLOW();
 
-    // bind texture to unit
+    // get unit
     auto unit = program->mTextureUnitMapping.getOrAddLocation(name);
-    glActiveTexture(GL_TEXTURE0 + unit);
-    glBindTexture(tex->getTarget(), tex->getObjectName());
 
-    // safety net: activate different unit
-    glActiveTexture(GL_TEXTURE0 + limits::maxCombinedTextureImageUnits - 1);
+    if (tex)
+    {
+        // bind texture to unit
+        glActiveTexture(GL_TEXTURE0 + unit);
+        glBindTexture(tex->getTarget(), tex->getObjectName());
 
-    // update shader binding
-    glUniform1i(program->getUniformLocation(name), unit);
+        // safety net: activate different unit
+        glActiveTexture(GL_TEXTURE0 + limits::maxCombinedTextureImageUnits - 1);
 
-    // save texture
-    while (program->mTextures.size() <= unit)
-        program->mTextures.push_back(nullptr);
-    program->mTextures[unit] = tex;
+        // update shader binding
+        glUniform1i(program->getUniformLocation(name), unit);
+
+        // save texture
+        while (program->mTextures.size() <= unit)
+            program->mTextures.push_back(nullptr);
+        program->mTextures[unit] = tex;
+    }
+    else // nullptr
+    {
+        // erase texture entry
+        if (unit < program->mTextures.size())
+            program->mTextures[unit] = nullptr;
+
+        // update shader binding
+        glUniform1i(program->getUniformLocation(name), limits::maxCombinedTextureImageUnits - 1);
+    }
 }
 
 void Program::UsedProgram::setImage(size_t bindingLocation, const SharedTexture &tex, GLenum usage, int mipmapLevel, int layer)

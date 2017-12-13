@@ -40,7 +40,10 @@ if(NOT MSVC)
 else()
     target_compile_options(assimp PUBLIC
         /MP # multi processor compilation
-        )
+    )
+    target_compile_options(assimp PRIVATE
+        /bigobj # due to IFCReaderGen1
+    )
 endif()
 
 target_compile_definitions(assimp PUBLIC
