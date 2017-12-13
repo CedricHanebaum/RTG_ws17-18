@@ -65,6 +65,8 @@ std::map<int, SharedVertexArray> Chunk::queryMeshes()
 {
     GLOW_ACTION(); // time this method (shown on shutdown)
 
+    if(!mIsDirty) return mMeshes;
+
     // clear list of cached meshes
     mMeshes.clear();
     std::set<int> built; // track already built materials
@@ -89,6 +91,8 @@ std::map<int, SharedVertexArray> Chunk::queryMeshes()
                         mMeshes[b.mat] = vao;
                 }
             }
+
+    mIsDirty = false;
 
     glow::info() << "Rebuilding mesh for " << chunkPos;
     return mMeshes;
