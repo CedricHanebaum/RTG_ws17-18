@@ -14,6 +14,7 @@
 #include "Vertices.hh"
 #include "World.hh"
 
+
 using namespace glow;
 
 
@@ -113,51 +114,10 @@ SharedVertexArray Chunk::buildMeshFor(int mat) const
                 auto gp = chunkPos + p;     // global position
                 auto const &blk = block(p);
 
-                if (blk.mat != mat)
-                    continue; // consider only current material
+                if (blk.mat == mat) { // consider only current material
+                    generateBlock(vertices, p, gp);
+                }
 
-                // go over all 6 directions
-                for (auto s : { -1, 1 })
-                    for (auto dir : { 0, 1, 2 })
-                    {
-                        // face normal
-                        auto n = s * glm::ivec3(dir == 0, dir == 1, dir == 2);
-
-                        auto v1 = glm::ivec3(dir == 2, dir == 0, dir == 1);
-                        auto v2 = glm::ivec3(dir == 1, dir == 2, dir == 0);
-
-                        auto p1 = gp;
-                        auto p2 = gp + v1;
-                        auto p3 = gp + v2;
-                        auto p4 = gp + v1 + v2;
-
-                        auto t1 = glm::vec2(0, 0);
-                        auto t2 = glm::vec2(1, 0);
-                        auto t3 = glm::vec2(0, 1);
-                        auto t4 = glm::vec2(1, 1);
-
-
-                        if(s == 1) {
-                            p1 += n;
-                            p2 += n;
-                            p3 += n;
-                            p4 += n;
-                        } else {
-                            auto tmp = p3;
-                            p3 = p2;
-                            p2 = tmp;
-                        }
-
-                        auto ao = aoAt(p, v1, v2);
-
-                        vertices.push_back(TerrainVertex{p1, n, t1, ao});
-                        vertices.push_back(TerrainVertex{p2, n, t2, ao});
-                        vertices.push_back(TerrainVertex{p3, n, t3, ao});
-
-                        vertices.push_back(TerrainVertex{p2, n, t2, ao});
-                        vertices.push_back(TerrainVertex{p4, n, t4, ao});
-                        vertices.push_back(TerrainVertex{p3, n, t3, ao});
-                    }
             }
 
     if (vertices.empty())
@@ -178,6 +138,53 @@ float Chunk::aoAt(glm::ivec3 pos, glm::ivec3 dx, glm::ivec3 dy) const
     glm::vec3 a11 = pos + dy;
     return glm::length(a10 - a01) > glm::length(a00 - a11) ? -1.0f : 1.0f; // TODO
 }
+void Chunk::generateBlock(std::vector<TerrainVertex> &vertices, glm::ivec3 p, glm::ivec3 gp) const {
+    // go over all 6 directions
+    for (auto s : { -1, 1 })
+        for (auto dir : { 0, 1, 2 })
+        {
+            // face normal
+            auto n = s * glm::ivec3(dir == 0, dir == 1, dir == 2);
+
+            auto v1 = glm::ivec3(dir == 2, dir == 0, dir == 1);
+            auto v2 = glm::ivec3(dir == 1, dir == 2, dir == 0);
+
+            auto p1 = gp;
+            auto p2 = gp + v1;
+            auto p3 = gp + v2;
+            auto p4 = gp + v1 + v2;
+
+            if(s == 1) {
+                p1 += n;
+                p2 += n;
+                p3 += n;
+                p4 += n;
+            } else {
+                auto tmp = p3;
+                p3 = p2;
+                p2 = tmp;
+            }
+
+            auto ao = aoAt(p, v1, v2);
+
+            int encDir = dir << 0;
+            int encS = (s == -1 ? 0 : 1) << 2;
+            int data1 = encDir | encS | 0 << 3;
+            int data2 = encDir | encS | 1 << 3;
+            int data3 = encDir | encS | 2 << 3;
+            int data4 = encDir | encS | 3 << 3;
+
+            vertices.push_back(TerrainVertex{p1, data1, ao});
+            vertices.push_back(TerrainVertex{p2, data2, ao});
+            vertices.push_back(TerrainVertex{p3, data3, ao});
+
+            vertices.push_back(TerrainVertex{p2, data2, ao});
+            vertices.push_back(TerrainVertex{p4, data4, ao});
+            vertices.push_back(TerrainVertex{p3, data3, ao});
+        }
+
+}
+
 /// ============= STUDENT CODE END =============
 
 void Chunk::markDirty()
