@@ -143,46 +143,58 @@ void Chunk::generateBlock(std::vector<TerrainVertex> &vertices, glm::ivec3 p, gl
     for (auto s : { -1, 1 })
         for (auto dir : { 0, 1, 2 })
         {
-            // face normal
-            auto n = s * glm::ivec3(dir == 0, dir == 1, dir == 2);
-
-            auto v1 = glm::ivec3(dir == 2, dir == 0, dir == 1);
-            auto v2 = glm::ivec3(dir == 1, dir == 2, dir == 0);
-
-            auto p1 = gp;
-            auto p2 = gp + v1;
-            auto p3 = gp + v2;
-            auto p4 = gp + v1 + v2;
-
-            if(s == 1) {
-                p1 += n;
-                p2 += n;
-                p3 += n;
-                p4 += n;
-            } else {
-                auto tmp = p3;
-                p3 = p2;
-                p2 = tmp;
-            }
-
-            auto ao = aoAt(p, v1, v2);
-
-            int encDir = dir << 0;
-            int encS = (s == -1 ? 0 : 1) << 2;
-            int data1 = encDir | encS | 0 << 3;
-            int data2 = encDir | encS | 1 << 3;
-            int data3 = encDir | encS | 2 << 3;
-            int data4 = encDir | encS | 3 << 3;
-
-            vertices.push_back(TerrainVertex{p1, data1, ao});
-            vertices.push_back(TerrainVertex{p2, data2, ao});
-            vertices.push_back(TerrainVertex{p3, data3, ao});
-
-            vertices.push_back(TerrainVertex{p2, data2, ao});
-            vertices.push_back(TerrainVertex{p4, data4, ao});
-            vertices.push_back(TerrainVertex{p3, data3, ao});
+            if(isVisible(gp, dir, s)) generateFace(vertices, gp, dir, s);
         }
+}
 
+void Chunk::generateFace(std::vector<TerrainVertex> &vertices, glm::ivec3 gp, int dir, int s) const {
+
+    // face normal
+    auto n = s * glm::ivec3(dir == 0, dir == 1, dir == 2);
+
+    auto v1 = glm::ivec3(dir == 2, dir == 0, dir == 1);
+    auto v2 = glm::ivec3(dir == 1, dir == 2, dir == 0);
+
+    auto p1 = gp;
+    auto p2 = gp + v1;
+    auto p3 = gp + v2;
+    auto p4 = gp + v1 + v2;
+
+    if(s == 1) {
+        p1 += n;
+        p2 += n;
+        p3 += n;
+        p4 += n;
+    } else {
+        auto tmp = p3;
+        p3 = p2;
+        p2 = tmp;
+    }
+
+    // auto ao = aoAt(p, v1, v2);
+
+    int encDir = dir << 0;
+    int encS = (s == -1 ? 0 : 1) << 2;
+    int data1 = encDir | encS | 0 << 3;
+    int data2 = encDir | encS | 1 << 3;
+    int data3 = encDir | encS | 2 << 3;
+    int data4 = encDir | encS | 3 << 3;
+
+    vertices.push_back(TerrainVertex{p1, data1, 1});
+    vertices.push_back(TerrainVertex{p2, data2, 1});
+    vertices.push_back(TerrainVertex{p3, data3, 1});
+
+    vertices.push_back(TerrainVertex{p2, data2, 1});
+    vertices.push_back(TerrainVertex{p4, data4, 1});
+    vertices.push_back(TerrainVertex{p3, data3, 1});
+}
+
+bool Chunk::isVisible(glm::ivec3 gp, int dir, int s) const {
+    glm::ivec3 vDir = s * glm::ivec3(dir == 0, dir == 1, dir == 2);
+    Block b = world->queryBlock(gp + vDir);
+
+    // if neighbouring block is not solid, this block is visible
+    return !b.isSolid();
 }
 
 /// ============= STUDENT CODE END =============

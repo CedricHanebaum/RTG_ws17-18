@@ -70,6 +70,10 @@ private: // gfx helper
     float aoAt(glm::ivec3 pos, glm::ivec3 dx, glm::ivec3 dy) const;
     /// Generates the vertices for the block at the given position and adds them to the vertex list.
     void generateBlock(std::vector<TerrainVertex>& vertices, glm::ivec3 p, glm::ivec3 gp) const;
+    /// Generates the vertices of a single face
+    void generateFace(std::vector<TerrainVertex>& vertices, glm::ivec3 gp, int dir, int s) const;
+    /// Checks if the given Face is visible, based on its neighbouring block
+    bool isVisible(glm::ivec3 gp, int dir, int s) const;
 
 /// ============= STUDENT CODE END =============
 
