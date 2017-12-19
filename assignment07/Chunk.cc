@@ -123,7 +123,40 @@ SharedVertexArray Chunk::buildMeshFor(int mat) const
                         // face normal
                         auto n = s * glm::ivec3(dir == 0, dir == 1, dir == 2);
 
-                        // TODO!
+                        auto v1 = glm::ivec3(dir == 2, dir == 0, dir == 1);
+                        auto v2 = glm::ivec3(dir == 1, dir == 2, dir == 0);
+
+                        auto p1 = gp;
+                        auto p2 = gp + v1;
+                        auto p3 = gp + v2;
+                        auto p4 = gp + v1 + v2;
+
+                        auto t1 = glm::vec2(0, 0);
+                        auto t2 = glm::vec2(1, 0);
+                        auto t3 = glm::vec2(0, 1);
+                        auto t4 = glm::vec2(1, 1);
+
+
+                        if(s == 1) {
+                            p1 += n;
+                            p2 += n;
+                            p3 += n;
+                            p4 += n;
+                        } else {
+                            auto tmp = p3;
+                            p3 = p2;
+                            p2 = tmp;
+                        }
+
+                        auto ao = aoAt(p, v1, v2);
+
+                        vertices.push_back(TerrainVertex{p1, n, t1, ao});
+                        vertices.push_back(TerrainVertex{p2, n, t2, ao});
+                        vertices.push_back(TerrainVertex{p3, n, t3, ao});
+
+                        vertices.push_back(TerrainVertex{p2, n, t2, ao});
+                        vertices.push_back(TerrainVertex{p4, n, t4, ao});
+                        vertices.push_back(TerrainVertex{p3, n, t3, ao});
                     }
             }
 
@@ -139,7 +172,11 @@ SharedVertexArray Chunk::buildMeshFor(int mat) const
 
 float Chunk::aoAt(glm::ivec3 pos, glm::ivec3 dx, glm::ivec3 dy) const
 {
-    return 1.0f; // TODO
+    glm::vec3 a00 = pos;
+    glm::vec3 a10 = pos + dx;
+    glm::vec3 a01 = pos + dy;
+    glm::vec3 a11 = pos + dy;
+    return glm::length(a10 - a01) > glm::length(a00 - a11) ? -1.0f : 1.0f; // TODO
 }
 /// ============= STUDENT CODE END =============
 

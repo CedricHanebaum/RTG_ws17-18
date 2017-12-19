@@ -26,13 +26,16 @@ uniform float uTextureScale;
 /// ============= STUDENT CODE BEGIN =============
 
 in vec3 aPosition;
+in vec3 aNormal;
+in vec2 aUV;
+in float aAO;
 
 void main()
 {
-    vNormal = vec3(0, 1, 0);
-    vTangent = vec3(1, 0, 0);
-    vTexCoord = vec2(0, 0); // don't forget uTextureScale
-    vAO = 1.0;
+    vNormal = aNormal;
+    vTangent = vec3(aNormal.y, aNormal.z, aNormal.x);
+    vTexCoord = aUV; // don't forget uTextureScale
+    vAO = 1.0f;
 
     vWorldPos = aPosition;
     vViewPos = vec3(uView * vec4(aPosition, 1.0));
