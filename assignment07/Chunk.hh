@@ -67,7 +67,7 @@ private: // gfx helper
     /// Builds the mesh for a given material
     glow::SharedVertexArray buildMeshFor(int mat) const;
     /// Returns the ambient occlusion at a given position
-    float aoAt(glm::ivec3 pos, glm::ivec3 dx, glm::ivec3 dy) const;
+    int aoAt(glm::ivec3 pos, glm::ivec3 dx, glm::ivec3 dy) const;
     /// Generates the vertices for the block at the given position and adds them to the vertex list.
     void generateBlock(std::vector<TerrainVertex>& vertices, glm::ivec3 p, glm::ivec3 gp) const;
     /// Generates the vertices of a single face

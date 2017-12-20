@@ -41,6 +41,10 @@ int getLocation(int data) {
     return (data >> 3) & 3;
 }
 
+int getAO(int data) {
+    return (data >> 5) & 3;
+}
+
 vec3 getNormal(int side, int dir) {
     return side * vec3(dir == 0, dir == 1, dir == 2);
 }
@@ -54,7 +58,7 @@ void main()
     vNormal = getNormal(getSide(aData), getDir(aData));
     vTangent = vec3(vNormal.y, vNormal.z, vNormal.x);
     vTexCoord = getTexCoord(getLocation(aData)); // don't forget uTextureScale
-    vAO = 1.0f;
+    vAO = 0.33f * getAO(aData);
 
     vWorldPos = aPosition;
     vViewPos = vec3(uView * vec4(aPosition, 1.0));
