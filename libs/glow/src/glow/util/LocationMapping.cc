@@ -3,11 +3,17 @@
 #include "glow/common/log.hh"
 
 #include <cassert>
+#include <atomic>
 
 using namespace glow;
 
+/// tracks creation of new locations
+static std::atomic_int sLocationCounter;
+
 LocationMapping::LocationMapping()
 {
+    // get new ID
+    mIdx = sLocationCounter.fetch_add(1);
 }
 
 size_t LocationMapping::size() const
@@ -123,8 +129,8 @@ void LocationMapping::negotiate(SharedLocationMapping &lhs, SharedLocationMappin
     if (lhs == rhs)
         return; // already equal, nop
 
-    // use smaller pointer as "truth"
-    auto keepLhs = lhs.get() < rhs.get();
+    // use first created mapping as truth
+    auto keepLhs = lhs->mIdx < rhs->mIdx;
     auto trueMapping = keepLhs ? lhs : rhs;
     auto otherMapping = keepLhs ? rhs : lhs;
     auto changed = keepLhs ? &changedRhs : &changedLhs;

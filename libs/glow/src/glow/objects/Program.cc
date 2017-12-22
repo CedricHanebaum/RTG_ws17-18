@@ -473,6 +473,7 @@ SharedProgram Program::createFromFile(const std::string &fileOrBaseName)
     std::string content;
     std::string realFileName;
 
+    // try to resolve file directly
     if (Shader::resolveFile(fileOrBaseName, type, content, realFileName))
     {
         if (!realFileName.empty())
@@ -480,15 +481,28 @@ SharedProgram Program::createFromFile(const std::string &fileOrBaseName)
         else
             program->attachShader(Shader::createFromSource(type, content));
     }
-    else
+    else // otherwise check endings
+    {
         for (auto const &kvp : glow::shaderEndingToType)
-            if (Shader::resolveFile(fileOrBaseName + kvp.first, type, content, realFileName))
+        {
+            auto fname = fileOrBaseName;
+            while (fname != "")
             {
-                if (!realFileName.empty())
-                    program->attachShader(Shader::createFromFile(type, realFileName));
-                else
-                    program->attachShader(Shader::createFromSource(type, content));
+                if (Shader::resolveFile(fname + kvp.first, type, content, realFileName))
+                {
+                    if (!realFileName.empty())
+                        program->attachShader(Shader::createFromFile(type, realFileName));
+                    else
+                        program->attachShader(Shader::createFromSource(type, content));
+
+                    break; // found file
+                }
+
+                // try to find "base" versions
+                fname = util::stripFileDot(fname);
             }
+        }
+    }
 
     if (program->mShader.empty())
         warning() << "No shaders attached from '" << fileOrBaseName << "'. This may indicate a path error.";

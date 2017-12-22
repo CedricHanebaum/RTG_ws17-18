@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string>
 #include <algorithm>
+#include <string>
 
 namespace glow
 {
@@ -67,6 +67,26 @@ inline std::string pathOf(std::string const &filename)
     if (minPos == 0)
         return "";
     return filename.substr(0, minPos);
+}
+
+/// strips everything after (and including) the last dot of the filename
+/// returns "" otherwise
+/// e.g. "a.b.c" -> "a.b" but "a.b/c" -> ""
+inline std::string stripFileDot(std::string const &filename)
+{
+    auto dotPos = filename.rfind('.');
+    if (dotPos == std::string::npos)
+        return "";
+
+    auto slashPosA = filename.rfind('/');
+    if (slashPosA != std::string::npos && slashPosA > dotPos)
+        return "";
+
+    auto slashPosB = filename.rfind('\\');
+    if (slashPosB != std::string::npos && slashPosB > dotPos)
+        return "";
+
+    return filename.substr(0, dotPos);
 }
 }
 }

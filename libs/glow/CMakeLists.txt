@@ -82,6 +82,8 @@ if(NOT MSVC)
     target_compile_options(glow PUBLIC
         # C++11 for C++ files
         $<$<COMPILE_LANGUAGE:CXX>:-std=c++11>
+        # Force GLM to use C++11
+        -DGLM_FORCE_CXX11
         # -Wno-strict-aliasing # Temporary fix for https://github.com/g-truc/glm/issues/473
         )
 

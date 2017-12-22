@@ -163,7 +163,7 @@ bool GlfwApp::onKey(int key, int scancode, int action, int mods)
     if (TwEventKeyGLFW(mWindow, key, scancode, action, mods))
         return true;
 
-    if (key == GLFW_KEY_HOME && action == GLFW_PRESS)
+    if (key == GLFW_KEY_HOME && action != GLFW_RELEASE)
     {
         onResetView();
         return true;
@@ -242,17 +242,17 @@ bool GlfwApp::onMouseButton(double x, double y, int button, int action, int mods
     if (TwEventMouseButtonGLFW(mWindow, button, action, mods))
         return true;
 
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action != GLFW_RELEASE)
         mMouseLeft = true;
-    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action != GLFW_RELEASE)
         mMouseRight = true;
 
     // Double [MMB] (no mods) -> reset view
-    if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS && clickCount > 1 && mods == 0)
+    if (button == GLFW_MOUSE_BUTTON_MIDDLE && action != GLFW_RELEASE && clickCount > 1 && mods == 0)
         onResetView();
 
     // Double [LMB] (no mods) -> center on pos
-    if (mUseDefaultCameraHandlingLeft && button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && clickCount > 1 && mods == 0)
+    if (mUseDefaultCameraHandlingLeft && button == GLFW_MOUSE_BUTTON_LEFT && action != GLFW_RELEASE && clickCount > 1 && mods == 0)
     {
         glm::vec3 pos;
         float depth;
