@@ -70,6 +70,9 @@ public:
     /// is 1 if no divisor > 0 is present
     /// otherwise max of divisor * elementCount per attribute
     int getInstanceCount() const;
+    /// returns the number of primitives in the first divisor-0 array buffer
+    /// returns 0 if none present
+    int getVertexCount() const;
 
 public:
     /// Gets the currently bound VAO (nullptr if none)

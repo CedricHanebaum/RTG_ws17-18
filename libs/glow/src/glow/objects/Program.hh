@@ -406,6 +406,9 @@ public: // static construction
     /// E.g. createFromFile("mesh");
     ///   will use mesh.vsh as vertex shader and mesh.fsh as fragment shader if available
     /// See common/shader_endings.cc for a list of available endings
+    /// Will also traverse "dots" if file not found to check for base versions
+    /// E.g. createFromFile("mesh.opaque");
+    ///   might find mesh.opaque.fsh and mesh.vsh
     static SharedProgram createFromFile(std::string const& fileOrBaseName);
     /// Creates a program from a list of explicitly named files
     /// Shader type is determined by common/shader_endings.cc

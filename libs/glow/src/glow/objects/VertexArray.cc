@@ -106,17 +106,8 @@ void VertexArray::BoundVertexArray::draw(GLsizei instanceCount)
     }
     else
     {
-        // vertex count is first divisor-0 attribute
-        auto vCount = 0u;
-        for (auto const &a : vao->mAttributes)
-            if (a.buffer->getAttributes()[a.locationInBuffer].divisor == 0)
-            {
-                vCount = a.buffer->getElementCount();
-                break;
-            }
-
         // draw unindexed
-        glDrawArraysInstanced(vao->mPrimitiveMode, 0, vCount, instanceCount);
+        glDrawArraysInstanced(vao->mPrimitiveMode, 0, vao->getVertexCount(), instanceCount);
     }
 
     // notify FBOs
@@ -271,20 +262,45 @@ SharedArrayBuffer VertexArray::getAttributeBuffer(const std::string &name) const
 
 int VertexArray::getInstanceCount() const
 {
-    auto iCnt = 1;
+    auto isInstanced = false;
+    auto iCnt = std::numeric_limits<int>::max();
     for (auto const &a : mAttributes)
     {
         auto eCnt = a.buffer->getElementCount();
         auto const &aa = a.buffer->getAttributes()[a.locationInBuffer];
-        iCnt = std::max(iCnt, (int)(aa.divisor * eCnt));
+
+        if (aa.divisor > 0)
+        {
+            isInstanced = true;
+            // in order to not sample out of bounds:
+            //   at most divisor * |element| instances
+            iCnt = std::min(iCnt, (int)(aa.divisor * eCnt));
+        }
     }
-    return iCnt;
+    return isInstanced ? iCnt : 1;
+}
+
+int VertexArray::getVertexCount() const
+{
+    // vertex count is derived from first divisor-0 attribute
+    for (auto const &a : mAttributes)
+        if (a.buffer->getAttributes()[a.locationInBuffer].divisor == 0)
+            return a.buffer->getElementCount();
+
+    return 0;
 }
 
 void VertexArray::BoundVertexArray::attach(const SharedArrayBuffer &ab)
 {
     if (!isCurrent())
         return;
+
+    if (!ab)
+    {
+        error() << "Trying to attach nullptr as ArrayBuffer";
+        assert(false);
+        return;
+    }
 
     auto const &attrs = ab->getAttributes();
     for (auto i = 0u; i < attrs.size(); ++i)

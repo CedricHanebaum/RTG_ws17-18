@@ -170,6 +170,7 @@ bool Shader::resolveFile(const std::string &name, GLenum &shaderType, std::strin
         if (util::endswith(name, kvp.first))
         {
             shaderType = kvp.second;
+            found = true;
             break;
         }
 

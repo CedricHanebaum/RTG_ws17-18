@@ -20,6 +20,9 @@ class LocationMapping final
     /// unused location are empty strings
     std::vector<std::string> mLocations;
 
+    /// Creation index, used for determining which mapping "wins"
+    int mIdx = -1;
+
 public:
     LocationMapping();
 
