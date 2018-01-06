@@ -29,18 +29,18 @@
 
 struct TerrainVertex
 {
-    glm::vec3 pos;
-    glm::vec3 n;
-    glm::vec2 uv;
-    float ao;
+    glm::ivec3 pos;
+    // dir: xxxx xx11
+    // s  : xxxx x1xx
+    // loc: xxx1 1xxx
+    // ao : x11x xxxx
+    int data;
 
     static std::vector<glow::ArrayBufferAttribute> attributes()
     {
         return {
             { &TerrainVertex::pos, "aPosition" },  //
-            { &TerrainVertex::n, "aNormal"},
-            { &TerrainVertex::uv, "aUV"},
-            { &TerrainVertex::ao, "aAO"},
+            { &TerrainVertex::data, "aData"},
         };
     }
 };

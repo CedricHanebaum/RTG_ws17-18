@@ -25,17 +25,40 @@ uniform float uTextureScale;
 ///
 /// ============= STUDENT CODE BEGIN =============
 
-in vec3 aPosition;
-in vec3 aNormal;
-in vec2 aUV;
+in ivec3 aPosition;
+in int aData;
 in float aAO;
+
+int getDir(int data) {
+    return data & 3;
+}
+
+int getSide(int data) {
+    return ((data >> 2) & 1) == 0 ? -1 : 1;
+}
+
+int getLocation(int data) {
+    return (data >> 3) & 3;
+}
+
+int getAO(int data) {
+    return (data >> 5) & 3;
+}
+
+vec3 getNormal(int side, int dir) {
+    return side * vec3(dir == 0, dir == 1, dir == 2);
+}
+
+vec2 getTexCoord(int loc) {
+    return vec2(loc == 0 || loc == 1 ? 0 : 1, loc == 0 || loc == 2 ? 0 : 1);
+}
 
 void main()
 {
-    vNormal = aNormal;
-    vTangent = vec3(aNormal.y, aNormal.z, aNormal.x);
-    vTexCoord = aUV; // don't forget uTextureScale
-    vAO = 1.0f;
+    vNormal = getNormal(getSide(aData), getDir(aData));
+    vTangent = vec3(vNormal.y, vNormal.z, vNormal.x);
+    vTexCoord = getTexCoord(getLocation(aData)); // don't forget uTextureScale
+    vAO = 0.33f * getAO(aData);
 
     vWorldPos = aPosition;
     vViewPos = vec3(uView * vec4(aPosition, 1.0));

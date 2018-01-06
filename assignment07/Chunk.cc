@@ -14,6 +14,7 @@
 #include "Vertices.hh"
 #include "World.hh"
 
+
 using namespace glow;
 
 
@@ -113,51 +114,10 @@ SharedVertexArray Chunk::buildMeshFor(int mat) const
                 auto gp = chunkPos + p;     // global position
                 auto const &blk = block(p);
 
-                if (blk.mat != mat)
-                    continue; // consider only current material
+                if (blk.mat == mat) { // consider only current material
+                    generateBlock(vertices, p, gp);
+                }
 
-                // go over all 6 directions
-                for (auto s : { -1, 1 })
-                    for (auto dir : { 0, 1, 2 })
-                    {
-                        // face normal
-                        auto n = s * glm::ivec3(dir == 0, dir == 1, dir == 2);
-
-                        auto v1 = glm::ivec3(dir == 2, dir == 0, dir == 1);
-                        auto v2 = glm::ivec3(dir == 1, dir == 2, dir == 0);
-
-                        auto p1 = gp;
-                        auto p2 = gp + v1;
-                        auto p3 = gp + v2;
-                        auto p4 = gp + v1 + v2;
-
-                        auto t1 = glm::vec2(0, 0);
-                        auto t2 = glm::vec2(1, 0);
-                        auto t3 = glm::vec2(0, 1);
-                        auto t4 = glm::vec2(1, 1);
-
-
-                        if(s == 1) {
-                            p1 += n;
-                            p2 += n;
-                            p3 += n;
-                            p4 += n;
-                        } else {
-                            auto tmp = p3;
-                            p3 = p2;
-                            p2 = tmp;
-                        }
-
-                        auto ao = aoAt(p, v1, v2);
-
-                        vertices.push_back(TerrainVertex{p1, n, t1, ao});
-                        vertices.push_back(TerrainVertex{p2, n, t2, ao});
-                        vertices.push_back(TerrainVertex{p3, n, t3, ao});
-
-                        vertices.push_back(TerrainVertex{p2, n, t2, ao});
-                        vertices.push_back(TerrainVertex{p4, n, t4, ao});
-                        vertices.push_back(TerrainVertex{p3, n, t3, ao});
-                    }
             }
 
     if (vertices.empty())
@@ -170,14 +130,93 @@ SharedVertexArray Chunk::buildMeshFor(int mat) const
     return VertexArray::create(ab);
 }
 
-float Chunk::aoAt(glm::ivec3 pos, glm::ivec3 dx, glm::ivec3 dy) const
+int Chunk::aoAt(glm::ivec3 pos, glm::ivec3 dx, glm::ivec3 dy) const
 {
-    glm::vec3 a00 = pos;
-    glm::vec3 a10 = pos + dx;
-    glm::vec3 a01 = pos + dy;
-    glm::vec3 a11 = pos + dy;
-    return glm::length(a10 - a01) > glm::length(a00 - a11) ? -1.0f : 1.0f; // TODO
+    if(world->queryBlock(pos).isSolid()) return 0;
+
+    auto side1 = world->queryBlock(pos + dx);
+    auto side2 = world->queryBlock(pos + dy);
+    auto corner = world->queryBlock(pos + dx + dy);
+
+    if(side1.isSolid() && side2.isSolid()) {
+        return 0;
+    }
+    return 3 - ((int)side1.isSolid() + (int)side2.isSolid() + (int)corner.isSolid());
 }
+void Chunk::generateBlock(std::vector<TerrainVertex> &vertices, glm::ivec3 p, glm::ivec3 gp) const {
+    // go over all 6 directions
+    for (auto s : { -1, 1 })
+        for (auto dir : { 0, 1, 2 })
+        {
+            if(isVisible(gp, dir, s)) generateFace(vertices, gp, dir, s);
+        }
+}
+
+void Chunk::generateFace(std::vector<TerrainVertex> &vertices, glm::ivec3 gp, int dir, int s) const {
+
+    // face normal
+    auto n = s * glm::ivec3(dir == 0, dir == 1, dir == 2);
+
+    auto v1 = glm::ivec3(dir == 2, dir == 0, dir == 1);
+    auto v2 = glm::ivec3(dir == 1, dir == 2, dir == 0);
+
+    auto p1 = gp;
+    auto p2 = gp + v1;
+    auto p3 = gp + v2;
+    auto p4 = gp + v1 + v2;
+
+    // winding order for back face culling
+    if(s == 1) {
+        p1 += n;
+        p2 += n;
+        p3 += n;
+        p4 += n;
+    } else {
+        auto tmp = p3;
+        p3 = p2;
+        p2 = tmp;
+    }
+
+    auto ao1 = aoAt(gp + n, -v1, -v2);
+    auto ao2 = aoAt(gp + n, +v1, -v2);
+    auto ao3 = aoAt(gp + n, -v1, +v2);
+    auto ao4 = aoAt(gp + n, +v1, +v2);
+
+    int encS = (s == -1 ? 0 : 1);
+    auto tv1 = TerrainVertex{p1, dir << 0 | encS << 2 | 0 << 3 | ao1 << 5};
+    auto tv2 = TerrainVertex{p2, dir << 0 | encS << 2 | 1 << 3 | ao2 << 5};
+    auto tv3 = TerrainVertex{p3, dir << 0 | encS << 2 | 2 << 3 | ao3 << 5};
+    auto tv4 = TerrainVertex{p4, dir << 0 | encS << 2 | 3 << 3 | ao4 << 5};
+
+    // OA flip quad
+    if(ao1 + ao4 > ao2 + ao3) {
+        vertices.push_back(tv1);
+        vertices.push_back(tv2);
+        vertices.push_back(tv4);
+
+        vertices.push_back(tv1);
+        vertices.push_back(tv4);
+        vertices.push_back(tv3);
+    } else {
+        vertices.push_back(tv1);
+        vertices.push_back(tv2);
+        vertices.push_back(tv3);
+
+        vertices.push_back(tv2);
+        vertices.push_back(tv4);
+        vertices.push_back(tv3);
+    }
+
+}
+
+bool Chunk::isVisible(glm::ivec3 gp, int dir, int s) const {
+    glm::ivec3 vDir = s * glm::ivec3(dir == 0, dir == 1, dir == 2);
+    Block b = world->queryBlock(gp + vDir);
+
+    // if neighbouring block is not solid, this block is visible
+    return !b.isSolid();
+}
+
 /// ============= STUDENT CODE END =============
 
 void Chunk::markDirty()
