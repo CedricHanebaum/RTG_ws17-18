@@ -344,6 +344,20 @@ void Assignment08::renderOpaquePass()
     ///
     /// ============= STUDENT CODE BEGIN =============
 
+    // bind and clear g buffer
+    mFramebufferGBuffer->bind();
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // set depth func
+    glDepthFunc(GL_LEQUAL);
+
+    // enable writing to sRGB buffer
+    glDrawBuffers(3, mFramebufferGBuffer->getColorAttachments());
+
+    // render scene as opaque pass
+    renderScene(getCamera().get(), RenderPass::Opaque);
+
     /// ============= STUDENT CODE END =============
 }
 
