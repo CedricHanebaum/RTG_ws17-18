@@ -322,6 +322,18 @@ void Assignment08::renderDepthPrePass()
     ///
     /// ============= STUDENT CODE BEGIN =============
 
+    if(!mPassDepthPre) return;
+
+    // bind and clear buffer
+    auto buffer = mFramebufferDepthPre->bind();
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    // set depth func state
+    glDepthFunc(GL_LESS);
+
+    // render
+    renderScene(getCamera().get(), RenderPass::DepthPre);
+
     /// ============= STUDENT CODE END =============
 }
 
