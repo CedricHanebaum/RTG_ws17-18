@@ -394,6 +394,26 @@ void Assignment08::renderLightPass()
     ///
     /// ============= STUDENT CODE BEGIN =============
 
+    // bind framebuffer
+    auto buffer = mFramebufferShadedOpaque->bind();
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    {
+        // enable additive blending
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+
+        // disable depth test, backface culling
+        GLOW_SCOPED(disable, GL_DEPTH_TEST);
+        GLOW_SCOPED(disable, GL_CULL_FACE);
+
+        // render
+        auto shader = mShaderFullscreenLight->use();
+        mMeshQuad->bind().draw();
+
+        glDisable(GL_BLEND);
+    }
+
     /// ============= STUDENT CODE END =============
 
     // point lights
@@ -412,6 +432,16 @@ void Assignment08::renderLightPass()
         ///     - however, we must not WRITE the depth (see OpenGL depth mask)
         ///
         /// ============= STUDENT CODE BEGIN =============
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+
+        glDepthMask(GL_FALSE);
+
+        auto shader = mShaderPointLight->use();
+        mMeshLightSpheres->bind().draw();
+
+        glDisable(GL_BLEND);
 
         /// ============= STUDENT CODE END =============
     }
