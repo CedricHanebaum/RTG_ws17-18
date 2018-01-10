@@ -442,6 +442,7 @@ void Assignment08::renderLightPass()
         mMeshLightSpheres->bind().draw();
 
         glDisable(GL_BLEND);
+        glDepthMask(GL_TRUE);
 
         /// ============= STUDENT CODE END =============
     }
