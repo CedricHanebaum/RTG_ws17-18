@@ -30,7 +30,7 @@ void main()
     ///
     /// Notes:
     ///     - remember that revealage and accum.a are swapped
-    ///     - you may want to clamp the accumulated alpha between 1e-1 and 5e4
+    ///     - you may want to clamp the accumulated alpha between 1e-4 and 5e4
     ///
     /// ============= STUDENT CODE BEGIN =============
     
