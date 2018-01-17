@@ -68,6 +68,26 @@ void main()
         ///
         /// ============= STUDENT CODE BEGIN =============
 
+        vec4 sp = vec4(vPosition * 2 - 1, opaqueDepth * 2 - 1, 1.0);
+        vec4 vp = uInvProj * sp;
+        vp /= vp.w;
+        vec4 wp = uInvView * vp;
+        float distance = distance(uCamPos, wp.xyz);
+
+        // leads to wiered warping, but at least this way the sky box
+        // doesn't rotate with the camera.
+        vec4 samplePosS = vec4(vPosition * 2 - 1, 1, 1);
+        vec4 samplePosV = uInvProj * samplePosS;
+        samplePosV /= samplePosV.w;
+        vec4 samplePosW = uInvView * samplePosV;
+
+        if(distance > uRenderDistance) opaqueColor = texture(uTexCubeMap, samplePosW.xyz).rgb;
+        float blendDistance = 3;
+        if(distance > uRenderDistance - blendDistance) {
+            float blendFactor = (distance - (uRenderDistance - blendDistance)) / blendDistance;
+            opaqueColor = (1 / blendFactor) * opaqueColor + blendFactor * texture(uTexCubeMap, samplePosW.xyz).rgb;
+        }
+
         /// ============= STUDENT CODE END =============
     }
 
