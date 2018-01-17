@@ -469,6 +469,25 @@ void Assignment08::renderTransparentPass()
     ///
     /// ============= STUDENT CODE BEGIN =============
 
+    {
+        // bind and clear TBuffer
+        auto buffer = mFramebufferTBuffer->bind();
+        glClearColor(0, 0, 0, 0); // Not sure about this one... (1, 0, 0, 0)
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // set render state
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_ALPHA); // Or (GL_ONE, GL_ONE) / additive?
+
+        GLOW_SCOPED(disable, GL_CULL_FACE);
+        glDepthMask(GL_FALSE);
+
+        renderScene(getCamera().get(), RenderPass::Transparent);
+
+        glDepthMask(GL_TRUE);
+        glDisable(GL_BLEND);
+    }
+
     /// ============= STUDENT CODE END =============
 }
 
