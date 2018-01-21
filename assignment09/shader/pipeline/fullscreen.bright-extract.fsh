@@ -12,7 +12,11 @@ void main()
     /// 
     /// ============= STUDENT CODE BEGIN =============
 
-    fColor = vec3(1, 0, 1);
+    ivec2 coords = ivec2(gl_FragCoord.xy);
+    vec3 c = texelFetch(uTexture, coords).rgb;
+
+    vec3 c_ = max(c * uToneMappingA - uBloomThreshold, vec3(0, 0, 0));
+    fColor = c_ / (c_ + 1);
 
     /// ============= STUDENT CODE END =============
 }

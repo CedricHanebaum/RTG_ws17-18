@@ -595,6 +595,21 @@ void Assignment09::renderHDRPass()
     ///
     /// ============= STUDENT CODE BEGIN =============
 
+    // bright extract
+    {
+        auto buffer = mFramebufferBrightExtract->bind();
+        auto shader = mShaderBrightExtract->use();
+
+        shader.setTexture("uTexture", mTexHDRColor);
+        shader.setUniform("uToneMappingA", mToneMappingA);
+        shader.setUniform("uToneMappingGamma", mToneMappingGamma);
+        shader.setUniform("uBloomThreshold", mBloomThreshold);
+
+        GLOW_SCOPED(disable, GL_DEPTH_TEST);
+        GLOW_SCOPED(disable, GL_CULL_FACE);
+        mMeshQuad->bind().draw();
+    }
+
 
     /// ============= STUDENT CODE END =============
 }
