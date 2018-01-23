@@ -8,7 +8,8 @@ void main()
     /// 
     /// ============= STUDENT CODE BEGIN =============
 
-    fColor = vec3(1, 0, 1);
+    ivec2 coords = ivec2(gl_FragCoord.xy);
+    fColor = texelFetch(uTexture, coords * 2).rgb;
 
     /// ============= STUDENT CODE END =============
 }

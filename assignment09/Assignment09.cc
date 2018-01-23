@@ -610,6 +610,18 @@ void Assignment09::renderHDRPass()
         mMeshQuad->bind().draw();
     }
 
+    // downsampling
+    {
+        auto buffer = mFramebufferBloomToA->bind();
+        auto shader = mShaderBloomDownsample->use();
+
+        shader.setTexture("uTexture", mTexBrightExtract);
+
+        GLOW_SCOPED(disable, GL_DEPTH_TEST);
+        GLOW_SCOPED(disable, GL_CULL_FACE);
+        mMeshQuad->bind().draw();
+    }
+
 
     /// ============= STUDENT CODE END =============
 }
