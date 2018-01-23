@@ -13,7 +13,9 @@ void main()
     /// 
     /// ============= STUDENT CODE BEGIN =============
 
-    fColor = vec3(1, 0, 1);
+    ivec2 coords = ivec2(gl_FragCoord.xy);
+    fColor = uToneMappingA * pow(texelFetch(uTexHDR, coords).rgb, vec3(uToneMappingGamma));
+    fColor += uBloomStrength * texture(uTexBloomDownsampled, coords * 0.5).rgb;
 
     /// ============= STUDENT CODE END =============
 }

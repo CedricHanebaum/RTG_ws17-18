@@ -642,9 +642,19 @@ void Assignment09::renderHDRPass()
 
     // tone mapping
     {
+        auto buffer = mFramebufferLDRColor->bind();
+        auto shader = mShaderToneMapping->use();
 
+        shader.setTexture("uTexHDR", mTexHDRColor);
+        shader.setTexture("uTexBloomDownsampled", mTexBloomDownsampledB);
+        shader.setUniform("uToneMappingA", mToneMappingA);
+        shader.setUniform("uToneMappingGamma", mToneMappingGamma);
+        shader.setUniform("uBloomStrength", mBloomStrength);
+
+        GLOW_SCOPED(disable, GL_DEPTH_TEST);
+        GLOW_SCOPED(disable, GL_CULL_FACE);
+        mMeshQuad->bind().draw();
     }
-
 
     /// ============= STUDENT CODE END =============
 }
