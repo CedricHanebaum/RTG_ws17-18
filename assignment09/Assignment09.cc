@@ -622,6 +622,29 @@ void Assignment09::renderHDRPass()
         mMeshQuad->bind().draw();
     }
 
+    // blur
+    {
+        auto shader = mShaderBloomKawase->use();
+
+        GLOW_SCOPED(disable, GL_DEPTH_TEST);
+        GLOW_SCOPED(disable, GL_CULL_FACE);
+        for(float distance : {0, 1, 2, 2, 3}) {
+            auto buffer = mFramebufferBloomToB->bind();
+
+            shader.setTexture("uTexture", mTexBloomDownsampledA);
+            shader.setUniform("uDistance", distance);
+
+            mMeshQuad->bind().draw();
+
+            swapBloomTargets();
+        } // last write to B
+    }
+
+    // tone mapping
+    {
+
+    }
+
 
     /// ============= STUDENT CODE END =============
 }
